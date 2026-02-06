@@ -1,0 +1,48 @@
+5 febr 2026.
+
+Deploying Step Motor Application on Raspberry Pi:
+
+Build the Application in RELASE mode.
+
+Select StepMotorApp as startup project.
+
+
+Build --> Publish --> Folder:
+	Target folder: bin\Release\net8.0\publish\
+
+	Profile settings 
+		Deployment mode: Self contained
+		Runtime: linux-arm64
+
+Build --> Publish --> Publish button
+
+
+Here you find concise steps to enable passwordless SSH from your Windows machine to the Raspberry Pi (recommended: use ed25519 keys):
+	raspberry_pi_best_practice_start_guide.txt
+
+Copy to Raspberry Pi:
+
+/* C:\Users\niels\source\TestApps\TestAsyncTasks  \StepMotorApp\bin\Release\net8.0\publish\linux-arm64\ */
+
+
+
+Open a powershell
+
+Navigate to the folder where the application is built.
+C:\Users\niels\source\TestApps\TestAsyncTasks
+
+ssh pi@raspberrypi
+
+Create a folder for the application:
+mkdir StepMotorApp
+
+From windows PC:
+scp StepMotorApp\bin\Release\net8.0\publish\linux-arm64\* pi@raspberrypi:~/StepMotorApp
+
+
+From Raspberry Pi:
+
+cd StepMotorApp/
+chmod +x ./StepMotorApp
+
+

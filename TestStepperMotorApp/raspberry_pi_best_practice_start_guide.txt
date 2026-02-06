@@ -1,0 +1,217 @@
+Raspberry Pi – Best Practice Start Guide
+
+Version: 2026 Purpose: Secure, stable and maintainable first-time setup
+
+  --------------------------
+  1. Prepare Your Computer
+  --------------------------
+
+1.1 Ensure SSH key exists
+
+Run on your computer:
+
+    ssh-keygen -t ed25519
+
+Your public key will be stored in:
+
+    ~/.ssh/id_ed25519.pub
+
+Keep both files safe: id_ed25519 (private key) id_ed25519.pub (public
+key)
+
+  --------------------------
+  2. Flash Raspberry Pi OS
+  --------------------------
+
+2.1 Open Raspberry Pi Imager
+
+Select: - Raspberry Pi OS Lite (recommended for headless setups) - Your
+SD card
+
+2.2 Open Advanced Options Press:
+
+    CTRL + SHIFT + X
+
+Configure the following:
+
+✔ Set hostname Example: raspberrypi-seismo
+
+✔ Enable SSH Select: Allow public-key authentication only
+
+✔ Add your public SSH key Paste contents of:
+
+    ~/.ssh/id_ed25519.pub
+
+✔ Set username Avoid default names if possible
+
+✔ Set password Used mainly as emergency access
+
+✔ Configure WiFi (if needed)
+
+✔ Set locale, timezone, keyboard
+
+Flash SD card.
+
+  ---------------
+  3. First Boot
+  ---------------
+
+Insert SD card and power Raspberry Pi.
+
+Allow 1–2 minutes for first boot.
+
+  ---------------------
+  4. First Login Test
+  ---------------------
+
+From your computer:
+
+    ssh username@hostname.local
+
+Example:
+
+    ssh anders@raspberrypi-seismo.local
+
+You should login without password.
+
+  ------------------------------
+  5. Update System Immediately
+  ------------------------------
+
+Run:
+
+    sudo apt update
+    sudo apt full-upgrade -y
+    sudo reboot
+
+  ------------------------
+  6. Verify SSH Security
+  ------------------------
+
+Check SSH configuration:
+
+    sudo nano /etc/ssh/sshd_config
+
+Ensure:
+
+    PasswordAuthentication no
+    PubkeyAuthentication yes
+
+Restart SSH if changes are made:
+
+    sudo systemctl restart ssh
+
+  --------------------------------
+  7. Set Static IP (Recommended)
+  --------------------------------
+
+Preferred method: Configure DHCP reservation in your router.
+
+Alternative: Configure static IP in Raspberry Pi network settings.
+
+  --------------------------------------
+  8. Create SSH Alias on Your Computer
+  --------------------------------------
+
+Edit:
+
+    nano ~/.ssh/config
+
+Example:
+
+    Host seismo
+        HostName raspberrypi-seismo.local
+        User anders
+
+You can now connect using:
+
+    ssh seismo
+
+  ----------------------------
+  9. Install Essential Tools
+  ----------------------------
+
+Recommended packages:
+
+    sudo apt install -y git htop curl vim
+
+Optional:
+
+    sudo apt install -y tmux
+
+  ------------------------------------------
+  10. Configure Automatic Security Updates
+  ------------------------------------------
+
+Install:
+
+    sudo apt install unattended-upgrades
+
+Enable:
+
+    sudo dpkg-reconfigure unattended-upgrades
+
+  ------------------------------------------------
+  11. Enable Firewall (Optional but Recommended)
+  ------------------------------------------------
+
+Install firewall:
+
+    sudo apt install ufw
+
+Allow SSH:
+
+    sudo ufw allow ssh
+
+Enable firewall:
+
+    sudo ufw enable
+
+  ---------------------
+  12. Backup Strategy
+  ---------------------
+
+Important items to backup:
+
+    - SSH keys
+    - Configuration files
+    - Project data
+    - SD card image (periodically)
+
+  ------------------------------
+  13. Monitoring & Maintenance
+  ------------------------------
+
+Check system health:
+
+    htop
+    df -h
+    free -h
+
+Check logs:
+
+    journalctl -xe
+
+  -----------------------
+  14. Documentation Tip
+  -----------------------
+
+Maintain a simple text file documenting:
+
+    Hostname
+    IP address
+    Purpose of device
+    Installed services
+    Login user
+
+  ------------------------------
+  15. Common Mistakes To Avoid
+  ------------------------------
+
+✘ Leaving default passwords active ✘ Losing SSH private keys ✘
+Forgetting backups ✘ Using random hostnames ✘ Exposing Pi directly to
+internet
+
+  --------------
+  End of Guide
+  --------------
