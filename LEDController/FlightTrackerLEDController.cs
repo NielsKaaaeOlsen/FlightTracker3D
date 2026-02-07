@@ -22,9 +22,9 @@ namespace LEDController
 
         public FlightTrackerLEDController(LedHardwareMode mode)
         {
-            _redLedController = new LEDController(17, mode);   //TODO: Define GPIO pins for the LEDs
-            _yellowLedController = new LEDController(18, mode);
-            _greenLedController = new LEDController(19, mode);
+            _redLedController = new LEDController(16, mode); 
+            _yellowLedController = new LEDController(20, mode);
+            _greenLedController = new LEDController(21, mode);
         }
 
         public void Dispose()

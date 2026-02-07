@@ -1,10 +1,10 @@
 ﻿using LEDController;
 
-Console.WriteLine("Red LED controlled by LEDControllers");
+Console.WriteLine("Red LED controlled by LEDController");
 
-int ledPin = 17; // GPIO pin number for the LED
+int ledPin = 16; // GPIO pin number for the LED
 
-LedHardwareMode mode= LedHardwareMode.Emulated; // Change to Real for actual hardware
+LedHardwareMode mode= LedHardwareMode.Real; // Change to Real for actual hardware
 
 using (LEDController.LEDController led = new LEDController.LEDController(ledPin, mode))
 {
@@ -19,7 +19,7 @@ using (LEDController.LEDController led = new LEDController.LEDController(ledPin,
 }
 
 
-Console.WriteLine("LED controlled by FlightTrackerLEDController ");
+Console.WriteLine("Red, Yellow and Green LED's controlled by FlightTrackerLEDController ");
 
 using (FlightTrackerLEDController flightTrackerLEDController = new FlightTrackerLEDController(mode))
 {
