@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="../../TestApps/TestAsyncTasks/LEDController/LEDController.csproj" />
+  <Project Path="../../TestApps/TestAsyncTasks/TestLEDApp/TestLEDApp.csproj" />
   <Project Path="StepperMotorController/StepperMotorController.csproj" />
   <Project Path="TestStepperMotorApp/TestStepperMotorApp.csproj" />
 </Solution>
