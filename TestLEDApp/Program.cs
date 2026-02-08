@@ -18,26 +18,29 @@ using (LEDController.LEDController led = new LEDController.LEDController(ledPin,
     led.SetState(LEDController.LEDController.LEDState.Off);
 }
 
-
+Console.WriteLine("");
+Console.WriteLine("");
 Console.WriteLine("Red, Yellow and Green LED's controlled by FlightTrackerLEDController ");
 
 using (FlightTrackerLEDController flightTrackerLEDController = new FlightTrackerLEDController(mode))
 {
-    Console.WriteLine($"State = {FlightTrackerState.NoAirCraftFound}");
-    flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
-    Thread.Sleep(2000);
+    flightTrackerLEDController.Initialize();
 
-    Console.WriteLine($"State = {FlightTrackerState.MovingToAirCraft}");
+    Console.WriteLine($"State = {FlightTrackerState.NoAirCraftFound}    {DateTime.Now.ToString()}");
+    flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
+    Thread.Sleep(5000);
+
+    Console.WriteLine($"State = {FlightTrackerState.MovingToAirCraft}   {DateTime.Now.ToString()}");
     flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
     Thread.Sleep(5000);
 
-    Console.WriteLine($"State = {FlightTrackerState.TrackingAirCraft}");
+    Console.WriteLine($"State = {FlightTrackerState.TrackingAirCraft}   {DateTime.Now.ToString()}");
     flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
-    Thread.Sleep(2000);
+    Thread.Sleep(5000);
 
-    Console.WriteLine($"State = {FlightTrackerState.PowerOff}");
+    Console.WriteLine($"State = {FlightTrackerState.PowerOff}           {DateTime.Now.ToString()}");
     flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.PowerOff);
-    Thread.Sleep(2000);
+    Thread.Sleep(5000);
 }
 
 

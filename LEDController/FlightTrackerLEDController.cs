@@ -20,11 +20,26 @@ namespace LEDController
         private LEDController _yellowLedController;
         private LEDController _greenLedController;
 
+        private readonly int _redPin = 16;
+        private readonly int _yellowPin = 20;
+        private readonly int _greenPin = 21;
+
+
         public FlightTrackerLEDController(LedHardwareMode mode)
         {
-            _redLedController = new LEDController(16, mode); 
-            _yellowLedController = new LEDController(20, mode);
-            _greenLedController = new LEDController(21, mode);
+            _redLedController = new LEDController(_redPin, mode); 
+            _yellowLedController = new LEDController(_yellowPin, mode);
+            _greenLedController = new LEDController(_greenPin, mode);
+        }
+
+        public void Initialize()
+        {
+                //-- Set pin mode
+                _redLedController.Initialize();
+                _yellowLedController.Initialize();
+                _greenLedController.Initialize();
+
+            SetFlightTrackerState(FlightTrackerState.PowerOff);
         }
 
         public void Dispose()
