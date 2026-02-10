@@ -4,17 +4,22 @@ Deploying Step Motor Application on Raspberry Pi:
 
 Build the Application in RELASE mode.
 
-Select StepMotorApp as startup project.
+Select TestStepperMotorApp as startup project.
 
+IMPORTANT ! !
+In Solution Explorer select the TestStepperMotorApp project 
 
 Build --> Publish --> Folder:
-	Target folder: bin\Release\net8.0\publish\
+	Target folder: ..\publishCommon\
 
 	Profile settings 
 		Deployment mode: Self contained
 		Runtime: linux-arm64
 
-Build --> Publish --> Publish button
+
+
+
+Build --> Publish --> Click "Publish" button
 
 
 Here you find concise steps to enable passwordless SSH from your Windows machine to the Raspberry Pi (recommended: use ed25519 keys):
@@ -22,27 +27,27 @@ Here you find concise steps to enable passwordless SSH from your Windows machine
 
 Copy to Raspberry Pi:
 
-/* C:\Users\niels\source\TestApps\TestAsyncTasks  \StepMotorApp\bin\Release\net8.0\publish\linux-arm64\ */
+/*  C:\Users\niels\source\repos\FlightTracker3D\publishCommon   */
 
 
 
 Open a powershell
 
 Navigate to the folder where the application is built.
-C:\Users\niels\source\TestApps\TestAsyncTasks
+C:\Users\niels\source\repos\FlightTracker3D
 
 ssh pi@raspberrypi
 
 Create a folder for the application:
-mkdir StepMotorApp
+mkdir FlightTracker3D
 
 From windows PC:
-scp StepMotorApp\bin\Release\net8.0\publish\linux-arm64\* pi@raspberrypi:~/StepMotorApp
+scp -r publishCommon\* pi@raspberrypi:~/FlightTracker3D
 
 
 From Raspberry Pi:
 
-cd StepMotorApp/
-chmod +x ./StepMotorApp
+cd FlightTracker3D/
+chmod +x ./TestStepperMotorApp
 
 
