@@ -1,6 +1,9 @@
 <Solution>
+  <Project Path="AirCraftDetector/AirCraftDetector.csproj" Id="b09d0b22-813e-49bc-b587-d55ced148d97" />
   <Project Path="LEDController/LEDController.csproj" />
-  <Project Path="TestLEDApp/TestLEDApp.csproj" />
+  <Project Path="MockSbsServer/MockSbsServer.csproj" Id="ee4b9456-1934-462e-8fbe-618eeac4d91e" />
   <Project Path="StepperMotorController/StepperMotorController.csproj" />
+  <Project Path="TestAirCraftDetectorApp/TestAirCraftDetectorApp.csproj" Id="aa835253-442a-452d-be5a-122a35351055" />
+  <Project Path="TestLEDApp/TestLEDApp.csproj" />
   <Project Path="TestStepperMotorApp/TestStepperMotorApp.csproj" />
 </Solution>
