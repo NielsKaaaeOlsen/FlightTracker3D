@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="AirCraftDetector/AirCraftDetector.csproj" Id="b09d0b22-813e-49bc-b587-d55ced148d97" />
+  <Project Path="GeoUtil/GeoUtil.csproj" Id="9faeef5c-03e4-4b42-ae9f-793c59d94f77" />
+  <Project Path="GeoUtilApp/GeoUtilApp.csproj" Id="6abfbbad-979d-4e9d-b8c1-ae3db8c2b53b" />
   <Project Path="LEDController/LEDController.csproj" />
   <Project Path="MockSbsServer/MockSbsServer.csproj" Id="ee4b9456-1934-462e-8fbe-618eeac4d91e" />
   <Project Path="StepperMotorController/StepperMotorController.csproj" />
