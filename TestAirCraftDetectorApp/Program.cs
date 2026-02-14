@@ -49,7 +49,14 @@ static class SimpleTestCases
         string host = "localhost";
         int port = 30003;
 
-        var nearestAirCraftDetector = new NearestAirCraftDetector(host, port);
+        PositionPoint referencePoint = new PositionPoint  
+        {
+            Latitude = 55.860084097583304,
+            Longitude = 12.4597123325542,
+            Altitude = 50
+        };
+
+        var nearestAirCraftDetector = new NearestAirCraftDetector(host, port, referencePoint);
 
         Task task = nearestAirCraftDetector.Initialize();
 
