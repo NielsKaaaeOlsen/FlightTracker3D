@@ -1,18 +1,19 @@
 ﻿using AirCraftDetector;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 
 Console.WriteLine("Hello, TestAirCraftDetectorApp!");
 
 
-Task task = SimpleTestCases.TestSbsTcpClientAsync();
-task.Wait();
+//Task task = SimpleTestCases.TestSbsTcpClientAsync();
+//task.Wait();
 
 
 //Task task = SimpleTestCases.TestSbsParserAsync();
 //task.Wait();
 
-//Task task = SimpleTestCases.TestNearestAirCraftDetectorserAsync();
-//task.Wait();
+Task task = SimpleTestCases.TestNearestAirCraftDetectorserAsync();
+task.Wait();
 
 
 static class SimpleTestCases
@@ -45,7 +46,11 @@ static class SimpleTestCases
 
     public static async Task TestNearestAirCraftDetectorserAsync()
     {
-        var nearestAirCraftDetector = new NearestAirCraftDetector();
+        string host = "localhost";
+        int port = 30003;
+
+        var nearestAirCraftDetector = new NearestAirCraftDetector(host, port);
+
         Task task = nearestAirCraftDetector.Initialize();
 
         while (true)

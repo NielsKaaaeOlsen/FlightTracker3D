@@ -10,16 +10,22 @@ namespace AirCraftDetector
     public class AirCraftListener
     {
         private readonly ConcurrentDictionary<string, AircraftTrack> _tracks;
-        public AirCraftListener(ConcurrentDictionary<string, AircraftTrack> tracks) 
+
+        private readonly int _port = 30003; //TODO: URL PORT
+        private readonly string _host;
+        public AirCraftListener(string host, int port, ConcurrentDictionary<string, AircraftTrack> tracks) 
         { 
             _tracks = tracks;
+            _host = host;
+            _port = port;
         }
 
         public async void Listen()
         {
             var client = new SbsTcpClient();
 
-            await client.ConnectAsync("192.168.1.92", 30003, line =>
+            //await client.ConnectAsync("192.168.1.92", 30003, line =>
+            await client.ConnectAsync(_host, _port, line =>
             {
                 var msg = SbsParser.Parse(line);
                 if (msg?.Latitude != null)

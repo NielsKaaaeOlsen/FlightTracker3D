@@ -13,11 +13,11 @@ namespace AirCraftDetector
         private readonly ConcurrentDictionary<string, AircraftTrack> _tracks;
         private readonly AirCraftListener _airCraftListener;
 
-        public NearestAirCraftDetector()
+        public NearestAirCraftDetector(string host, int port)
         {
             _tracks = new ConcurrentDictionary<string, AircraftTrack>();
 
-            _airCraftListener = new AirCraftListener(_tracks);
+            _airCraftListener = new AirCraftListener(host, port, _tracks); 
         }
 
         public async Task Initialize()
