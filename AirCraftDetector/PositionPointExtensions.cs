@@ -37,5 +37,16 @@ namespace AirCraftDetector
                 to.Latitude, to.Longitude, alt2
             );
         }
+
+        public static AzElPosition ToAzElPosition(this PositionPoint from, PositionPoint to)
+        {
+            var (azimuth, elevation) = from.AzimuthAndElevationTo(to);
+            return new AzElPosition
+            {
+                Timestamp = to.Timestamp,
+                Azimuth = azimuth,
+                Elevation = elevation
+            };
+        }
     }
 }

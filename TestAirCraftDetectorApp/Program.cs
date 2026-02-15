@@ -63,11 +63,11 @@ static class SimpleTestCases
         while (true)
         {
             Thread.Sleep(4000);
-            var nearestAirCraft = nearestAirCraftDetector.GetNearestAirCraft();
+            NearestAirCraftDetectorResult? result = nearestAirCraftDetector.GetNearestAirCraft();
 
-            if (nearestAirCraft?.AircraftTrack != null)
+            if (result != null)
             {
-                Console.WriteLine($"nearestAirCraft: Icao = {nearestAirCraft.AircraftTrack.Icao}");
+                Console.WriteLine($"nearestAirCraft: Icao = {result.AircraftTrack.Icao}  {result.AircraftAzElPosition.ToString()}");
             }
             else
             {

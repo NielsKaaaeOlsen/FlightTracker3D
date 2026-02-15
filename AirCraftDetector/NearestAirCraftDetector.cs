@@ -52,13 +52,13 @@ namespace AirCraftDetector
                     }
                 }
             }
-            //TODO: Determine if this is a new aircraft or an existing one. For now, we will assume it's a new aircraft. :-)
-            // We could keep track of the last detected aircraft and compare it with the bestTrack to determine if it's new or existing. :-)
-            // 
-            var nearest = new NearestAirCraftDetectorResult();
-            nearest.Type = NearestAirCraftDetectorResult.ResultType.newAircraftDetected;  //TODO:
-            nearest.AircraftTrack = bestTrack;
-            return nearest;
+            if (bestTrack != null) 
+            {
+                AzElPosition azElPos = _referencePoint.ToAzElPosition(bestTrack.History.Last<PositionPoint>());
+                var nearest = new NearestAirCraftDetectorResult(bestTrack, azElPos);
+                return nearest;
+            }
+            else { return null; }
         }
     }
 }

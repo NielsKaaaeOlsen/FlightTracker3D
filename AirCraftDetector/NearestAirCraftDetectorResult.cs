@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace AirCraftDetector
 {
-    public class NearestAirCraftDetectorResult   //TODO CTOR
+    public class NearestAirCraftDetectorResult
     {
-        public enum ResultType { NoAircraftsFound, newAircraftDetected, existingAirCraftDetected };
+        public NearestAirCraftDetectorResult(AircraftTrack aircraftTrack, AzElPosition aircraftAzElPosition)
+        {
+            this.AircraftTrack = aircraftTrack;
+            this.AircraftAzElPosition = aircraftAzElPosition; 
+        }
+        public AircraftTrack AircraftTrack { get; }
 
-        public ResultType Type { get; set;  }
-        public AircraftTrack? AircraftTrack { get; set; }
+        public AzElPosition AircraftAzElPosition { get; }
     }
 }
