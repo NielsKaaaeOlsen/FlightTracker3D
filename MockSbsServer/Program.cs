@@ -11,7 +11,7 @@ await server.StartAsync(30003);
 
 public class MockSbsServer
 {
-    private readonly List<SimulatedAircraft> _aircraft = new();
+    private readonly List<SimulatedAircraft> _aircrafts = new();
     private readonly Random _random = new();
 
     public async Task StartAsync(int port)
@@ -48,7 +48,7 @@ public class MockSbsServer
         double baseLat = 55.6761;
         double baseLon = 12.5683;
 
-        _aircraft.Add(new SimulatedAircraft
+        _aircrafts.Add(new SimulatedAircraft
         {
             Icao = "4CA1D2",
             Callsign = "SAS123",
@@ -60,7 +60,7 @@ public class MockSbsServer
             VerticalRate = 500
         });
 
-        _aircraft.Add(new SimulatedAircraft
+        _aircrafts.Add(new SimulatedAircraft
         {
             Icao = "471F5D",
             Callsign = "NAX456",
@@ -72,7 +72,7 @@ public class MockSbsServer
             VerticalRate = -200
         });
 
-        _aircraft.Add(new SimulatedAircraft
+        _aircrafts.Add(new SimulatedAircraft
         {
             Icao = "4CA8E7",
             Callsign = "DLH789",
@@ -87,7 +87,7 @@ public class MockSbsServer
 
     private void UpdateAircraft()
     {
-        foreach (var ac in _aircraft)
+        foreach (var ac in _aircrafts)
         {
             // Update position based on speed and track
             double speedKmPerSec = ac.GroundSpeed / 3600.0;
@@ -124,7 +124,7 @@ public class MockSbsServer
 
             while (client.Connected)
             {
-                foreach (var ac in _aircraft)
+                foreach (var ac in _aircrafts)
                 {
                     // Generate SBS-1 format message
                     string sbsMessage = GenerateSbsMessage(ac);
@@ -140,25 +140,6 @@ public class MockSbsServer
             Console.WriteLine($"Client disconnected: {ex.Message}");
         }
     }
-
-    /*
-            return new SbsMessage
-            {
-                MessageType = parts[0],
-                TransmissionType = parts[1],
-                Icao = parts[4],
-                Callsign = Empty(parts[10]),
-                Altitude = Int(parts[11]),
-                GroundSpeed = Double(parts[12]),
-                Track = Double(parts[13]),
-                Latitude = Double(parts[14]),
-                Longitude = Double(parts[15]),
-                VerticalRate = Int(parts[16]),
-                OnGround = Bool(parts[21]),
-                Timestamp = ParseDate(parts[6], parts[7])
-            };
-        }
-     */
 
     private string GenerateSbsMessage(SimulatedAircraft ac)
     {
