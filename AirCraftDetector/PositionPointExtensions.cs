@@ -14,38 +14,33 @@ namespace AirCraftDetector
         /// </summary>
         public static double DistanceTo(this PositionPoint from, PositionPoint to)
         {
-            double alt1 = from.Altitude ?? 0.0;
-            double alt2 = to.Altitude ?? 0.0;
-
             return GeoDistance.CalculateDistance(
-                from.Latitude, from.Longitude, alt1,
-                to.Latitude, to.Longitude, alt2
+                from.Latitude, from.Longitude, from.AltitudeMeters,
+                to.Latitude, to.Longitude, to.AltitudeMeters
             );
         }
 
         /// <summary>
         /// Calculate azimuth and elevation from this point to target point.
         /// </summary>
-        public static (double Azimuth, double Elevation) AzimuthAndElevationTo(
+        public static (double Azimuth, double Elevation, double Distance) AzimuthAndElevationTo(
             this PositionPoint from, PositionPoint to)
         {
-            double alt1 = from.Altitude ?? 0.0;
-            double alt2 = to.Altitude ?? 0.0;
-
             return GeoDistance.CalculateAzimuthAndElevation(
-                from.Latitude, from.Longitude, alt1,
-                to.Latitude, to.Longitude, alt2
+                from.Latitude, from.Longitude, from.AltitudeMeters,
+                to.Latitude, to.Longitude, to.AltitudeMeters
             );
         }
 
         public static AzElPosition ToAzElPosition(this PositionPoint from, PositionPoint to)
         {
-            var (azimuth, elevation) = from.AzimuthAndElevationTo(to);
+            var (azimuth, elevation, distance) = from.AzimuthAndElevationTo(to);
             return new AzElPosition
             {
                 Timestamp = to.Timestamp,
                 Azimuth = azimuth,
-                Elevation = elevation
+                Elevation = elevation,
+                Distance = distance
             };
         }
     }

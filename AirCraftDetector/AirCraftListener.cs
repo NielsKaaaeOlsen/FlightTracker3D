@@ -11,7 +11,7 @@ namespace AirCraftDetector
     {
         private readonly ConcurrentDictionary<string, AircraftTrack> _tracks;
 
-        private readonly int _port = 30003; //TODO: URL PORT
+        private readonly int _port;
         private readonly string _host;
         public AirCraftListener(string host, int port, ConcurrentDictionary<string, AircraftTrack> tracks) 
         { 
@@ -30,7 +30,7 @@ namespace AirCraftDetector
                 var msg = SbsParser.Parse(line);
                 if (msg?.Latitude != null)
                 {
-                    Console.WriteLine($"{msg.Icao} {msg.Callsign} {msg.Latitude},{msg.Longitude} ALT {msg.Altitude}");
+                    Console.WriteLine($"AirCraftListener: {msg.Icao} {msg.Callsign} {msg.Latitude},{msg.Longitude} ALT {msg.Altitude}");
                 }
 
                 if (msg?.Icao != null && msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
@@ -48,7 +48,7 @@ namespace AirCraftDetector
                             {
                                 Latitude = msg.Latitude.Value,
                                 Longitude = msg.Longitude.Value,
-                                Altitude = msg.Altitude.Value,
+                                Altitude = msg.Altitude.Value,  //Feet
                                 Timestamp = msg.Timestamp.Value
                             });
                             return track;
@@ -61,7 +61,7 @@ namespace AirCraftDetector
                             {
                                 Latitude = msg.Latitude.Value,
                                 Longitude = msg.Longitude.Value,
-                                Altitude = msg.Altitude.Value,
+                                Altitude = msg.Altitude.Value,  //Feet
                                 Timestamp = msg.Timestamp.Value
                             });
                             return existing;

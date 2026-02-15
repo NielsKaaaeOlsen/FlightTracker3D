@@ -148,13 +148,14 @@ namespace GeoUtil
         /// <param name="lon2">Longitude of point 2 (degrees)</param>
         /// <param name="alt2">Altitude of point 2 above WGS84 ellipsoid (meters)</param>
         /// <returns>Tuple: (Azimuth in degrees 0-360, Elevation in degrees -90 to +90)</returns>
-        public static (double Azimuth, double Elevation) CalculateAzimuthAndElevation(
+        public static (double Azimuth, double Elevation, double Distance) CalculateAzimuthAndElevation(
             double lat1, double lon1, double alt1,
             double lat2, double lon2, double alt2)
         {
             double azimuth = CalculateAzimuth(lat1, lon1, lat2, lon2);
             double elevation = CalculateElevation(lat1, lon1, alt1, lat2, lon2, alt2);
-            return (azimuth, elevation);
+            double distance = CalculateDistance(lat1, lon1, alt1, lat2, lon2, alt2);
+            return (azimuth, elevation, distance);
         }
 
         /// <summary>

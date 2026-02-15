@@ -54,7 +54,7 @@ public class MockSbsServer
             Callsign = "SAS123",
             Latitude = baseLat + 0.1,
             Longitude = baseLon + 0.1,
-            Altitude = 12000,
+            Altitude = 12000,  // Feet
             GroundSpeed = 450,
             Track = 90,
             VerticalRate = 500
@@ -66,7 +66,7 @@ public class MockSbsServer
             Callsign = "NAX456",
             Latitude = baseLat - 0.15,
             Longitude = baseLon + 0.2,
-            Altitude = 18000,
+            Altitude = 18000,  // Feet
             GroundSpeed = 420,
             Track = 270,
             VerticalRate = -200
@@ -78,7 +78,7 @@ public class MockSbsServer
             Callsign = "DLH789",
             Latitude = baseLat + 0.2,
             Longitude = baseLon - 0.1,
-            Altitude = 25000,
+            Altitude = 25000,  // Feet
             GroundSpeed = 480,
             Track = 180,
             VerticalRate = 0
@@ -96,17 +96,22 @@ public class MockSbsServer
 
             ac.Latitude += latChange;
             ac.Longitude += lonChange;
-            ac.Altitude += ac.VerticalRate / 60;  // feet per second
 
-            // Add some random variation
-            ac.Track += _random.NextDouble() * 2 - 1;
-            ac.GroundSpeed += _random.NextDouble() * 10 - 5;
-            ac.VerticalRate += _random.Next(-50, 50);
+            bool keepElevationAndSpeed = true;
+            if (!keepElevationAndSpeed)
+            {
+                ac.Altitude += ac.VerticalRate / 60;  // feet per second   //TODO: Require 1 update pr miinute ? ? 
 
-            // Keep values in reasonable ranges
-            ac.GroundSpeed = Math.Max(200, Math.Min(600, ac.GroundSpeed));
-            ac.Altitude = Math.Max(1000, Math.Min(40000, ac.Altitude));
-            ac.Track = (ac.Track + 360) % 360;
+                // Add some random variation
+                ac.Track += _random.NextDouble() * 2 - 1;
+                ac.GroundSpeed += _random.NextDouble() * 10 - 5;
+                ac.VerticalRate += _random.Next(-50, 50);
+
+                // Keep values in reasonable ranges
+                ac.GroundSpeed = Math.Max(200, Math.Min(600, ac.GroundSpeed));
+                ac.Altitude = Math.Max(1000, Math.Min(40000, ac.Altitude));
+                ac.Track = (ac.Track + 360) % 360;
+            }
         }
     }
 
@@ -136,16 +141,38 @@ public class MockSbsServer
         }
     }
 
+    /*
+            return new SbsMessage
+            {
+                MessageType = parts[0],
+                TransmissionType = parts[1],
+                Icao = parts[4],
+                Callsign = Empty(parts[10]),
+                Altitude = Int(parts[11]),
+                GroundSpeed = Double(parts[12]),
+                Track = Double(parts[13]),
+                Latitude = Double(parts[14]),
+                Longitude = Double(parts[15]),
+                VerticalRate = Int(parts[16]),
+                OnGround = Bool(parts[21]),
+                Timestamp = ParseDate(parts[6], parts[7])
+            };
+        }
+     */
+
     private string GenerateSbsMessage(SimulatedAircraft ac)
     {
         DateTime now = DateTime.UtcNow;
         string dateStr = now.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
         string timeStr = now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
+        //                        4      6   7    8    9    10       11         12        13    14  15   16          17     18    19        20  21
         // SBS-1 format: MSG,3,,,ICAO,,date,time,date,time,callsign,altitude,groundspeed,track,lat,lon,verticalrate,squawk,alert,emergency,spi,onground
-        return $"MSG,3,1,1,{ac.Icao},1,{dateStr},{timeStr},{dateStr},{timeStr}," +
+
+        return string.Create(CultureInfo.InvariantCulture, 
+               $"MSG,3,1,1,{ac.Icao},1,{dateStr},{timeStr},{dateStr},{timeStr}," +
                $"{ac.Callsign},{ac.Altitude:F0},{ac.GroundSpeed:F0},{ac.Track:F1}," +
-               $"{ac.Latitude:F6},{ac.Longitude:F6},{ac.VerticalRate:F0},,,,0,0";
+               $"{ac.Latitude:F6},{ac.Longitude:F6},{ac.VerticalRate:F0},,,,0,0");
     }
 }
 

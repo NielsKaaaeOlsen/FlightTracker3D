@@ -67,11 +67,11 @@ static class SimpleTestCases
 
             if (result != null)
             {
-                Console.WriteLine($"nearestAirCraft: Icao = {result.AircraftTrack.Icao}  {result.AircraftAzElPosition.ToString()}");
+                Console.WriteLine($"AirCraftDetectorApp: Icao = {result.AircraftTrack.Icao} {result.AircraftTrack.History.Last<PositionPoint>().ToString()}   {result.AircraftAzElPosition.ToString()}");
             }
             else
             {
-                Console.WriteLine("No aircraft detected.");
+                Console.WriteLine("AirCraftDetectorApp: No aircraft detected.");
             }
         }
     }

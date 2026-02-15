@@ -19,5 +19,5 @@ double elevation = GeoDistance.CalculateElevation(lat1, lon1, alt1, lat2, lon2, 
 Console.WriteLine($"Azimuth: {azimuth:F2}° (from north), Elevation: {elevation:F2}°");
 
 // Or combined:
-var (az, el) = GeoDistance.CalculateAzimuthAndElevation(lat1, lon1, alt1, lat2, lon2, alt2);
-Console.WriteLine($"Combined → Azimuth: {az:F2}°, Elevation: {el:F2}°");
+var (az, el, di) = GeoDistance.CalculateAzimuthAndElevation(lat1, lon1, alt1, lat2, lon2, alt2);
+Console.WriteLine($"Combined → Azimuth: {az:F2}°, Elevation: {el:F2}°  Distance: {di} meter");
