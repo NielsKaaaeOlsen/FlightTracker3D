@@ -37,7 +37,7 @@ namespace AirCraftDetector
                     Console.WriteLine($"AirCraftListener: '{msg.Icao}' '{msg.Callsign}' {msg.Latitude},{msg.Longitude} ALT {msg.Altitude}");
                 }
 
-                if (msg?.Icao != null && msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
+                if (msg?.Icao != null ) //&& msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
                 {
                     _tracks.AddOrUpdate(msg.Icao,
                         // addValueFactory: Oprettes kun hvis ICAO ikke findes
@@ -49,26 +49,37 @@ namespace AirCraftDetector
                                 Callsign = msg.Callsign,
                                 LastSeen = msg.Timestamp.Value
                             };
-                            track.History.Add(new PositionPoint
+                            if (msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
                             {
-                                Latitude = msg.Latitude.Value,
-                                Longitude = msg.Longitude.Value,
-                                Altitude = msg.Altitude.Value,  //Feet
-                                Timestamp = msg.Timestamp.Value
-                            });
+                                track.History.Add(new PositionPoint
+                                {
+                                    Latitude = msg.Latitude.Value,
+                                    Longitude = msg.Longitude.Value,
+                                    Altitude = msg.Altitude.Value,  //Feet
+                                    Timestamp = msg.Timestamp.Value
+                                });
+                                track.LastSeen = msg.Timestamp.Value;
+                            }
+                            if (msg?.Callsign != null)
+                                track.Callsign = msg.Callsign;
                             return track;
                         },
                         // updateValueFactory: Opdater eksisterende track
                         (key, existing) =>
                         {
-                            existing.LastSeen = msg.Timestamp.Value;
-                            existing.History.Add(new PositionPoint
+                            if (msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
                             {
-                                Latitude = msg.Latitude.Value,
-                                Longitude = msg.Longitude.Value,
-                                Altitude = msg.Altitude.Value,  //Feet
-                                Timestamp = msg.Timestamp.Value
-                            });
+                                existing.LastSeen = msg.Timestamp.Value;
+                                existing.History.Add(new PositionPoint
+                                {
+                                    Latitude = msg.Latitude.Value,
+                                    Longitude = msg.Longitude.Value,
+                                    Altitude = msg.Altitude.Value,  //Feet
+                                    Timestamp = msg.Timestamp.Value
+                                });
+                            }
+                            if (msg?.Callsign != null)
+                                existing.Callsign = msg.Callsign;
                             return existing;
                         });
                 }

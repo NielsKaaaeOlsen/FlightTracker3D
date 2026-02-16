@@ -68,7 +68,7 @@ static class SimpleTestCases
 
             if (result != null)
             {
-                Console.WriteLine($"AirCraftDetectorApp: Icao = {result.AircraftTrack.Icao} {result.AircraftTrack.History.Last<PositionPoint>().ToString()}   {result.AircraftAzElPosition.ToString()}");
+                Console.WriteLine($"AirCraftDetectorApp: Icao = '{result.AircraftTrack.Icao}', Callsign = '{result.AircraftTrack.Callsign}' {result.AircraftTrack.History.Last<PositionPoint>().ToString()}   {result.AircraftAzElPosition.ToString()}");
             }
             else
             {
