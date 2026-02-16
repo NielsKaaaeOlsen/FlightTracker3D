@@ -22,8 +22,8 @@ static class SimpleTestCases
     {
         var client = new SbsTcpClient();
 
-        //await client.ConnectAsync("192.168.1.92", 30003, line =>
-        await client.ConnectAsync("localhost", 30003, line =>
+        await client.ConnectAsync("192.168.1.92", 30003, line =>
+        //await client.ConnectAsync("localhost", 30003, line =>
         {
             Console.WriteLine($"line= {line}");
         });
@@ -46,7 +46,8 @@ static class SimpleTestCases
 
     public static async Task TestNearestAirCraftDetectorserAsync()
     {
-        string host = "localhost";
+        //string host = "localhost";
+        string host = "192.168.1.92";
         int port = 30003;
 
         PositionPoint referencePoint = new PositionPoint  

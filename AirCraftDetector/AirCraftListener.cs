@@ -13,14 +13,18 @@ namespace AirCraftDetector
 
         private readonly int _port;
         private readonly string _host;
-        public AirCraftListener(string host, int port, ConcurrentDictionary<string, AircraftTrack> tracks) 
-        { 
+
+        private readonly int _timeoutSec;
+        public AirCraftListener(string host, int port, ConcurrentDictionary<string, AircraftTrack> tracks)
+        {
             _tracks = tracks;
             _host = host;
             _port = port;
+
+            _timeoutSec = 10; // Seconds of inactivity before removing aircraft track from dictionary
         }
 
-        public async void Listen()
+        public async Task ListenForAircraftAsync()
         {
             var client = new SbsTcpClient();
 
@@ -30,7 +34,7 @@ namespace AirCraftDetector
                 var msg = SbsParser.Parse(line);
                 if (msg?.Latitude != null)
                 {
-                    Console.WriteLine($"AirCraftListener: {msg.Icao} {msg.Callsign} {msg.Latitude},{msg.Longitude} ALT {msg.Altitude}");
+                    Console.WriteLine($"AirCraftListener: '{msg.Icao}' '{msg.Callsign}' {msg.Latitude},{msg.Longitude} ALT {msg.Altitude}");
                 }
 
                 if (msg?.Icao != null && msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
@@ -42,6 +46,7 @@ namespace AirCraftDetector
                             var track = new AircraftTrack
                             {
                                 Icao = msg.Icao,
+                                Callsign = msg.Callsign,
                                 LastSeen = msg.Timestamp.Value
                             };
                             track.History.Add(new PositionPoint
@@ -69,5 +74,32 @@ namespace AirCraftDetector
                 }
             });
         }
+
+        public Task RemoveExpiredTracks()
+        {
+            while (true)
+            {
+                Thread.Sleep(1000);
+                lock (_tracks)
+                {
+                    //-- Remove track after timeout period without signal
+                    List<string> toBeRemoved = new List<string>();
+                    foreach (var track in _tracks)
+                    {
+                        TimeSpan dt = DateTime.Now - track.Value.LastSeen;
+                        if (dt.TotalSeconds > _timeoutSec)
+                            toBeRemoved.Add(track.Key);
+                    }
+                    foreach (string trackKey in toBeRemoved)
+                    {
+                        if (_tracks.TryRemove(trackKey, out var removed))
+                        {
+                            Console.WriteLine($"Track expired: {removed.Icao} (inactive for {_timeoutSec} sec)");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
+

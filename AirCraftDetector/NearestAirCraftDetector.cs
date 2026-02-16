@@ -25,7 +25,9 @@ namespace AirCraftDetector
 
         public async Task Initialize()
         {
-            Task task = Task.Run(() => _airCraftListener.Listen());
+            Task task = Task.Run(() => _airCraftListener.ListenForAircraftAsync());
+
+            Task taskCleanup = Task.Run(() => _airCraftListener.RemoveExpiredTracks());
         }
 
 

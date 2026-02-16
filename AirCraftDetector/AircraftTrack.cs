@@ -9,6 +9,8 @@ namespace AirCraftDetector
     public class AircraftTrack
     {
         public string Icao { get; set; }
+        public string Callsign { get; set; }
+
         public List<PositionPoint> History { get; } = new();
         public DateTime LastSeen { get; set; }
     }
