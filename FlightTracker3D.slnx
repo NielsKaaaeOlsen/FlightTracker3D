@@ -2,10 +2,12 @@
   <Project Path="AirCraftDetector/AirCraftDetector.csproj" Id="b09d0b22-813e-49bc-b587-d55ced148d97" />
   <Project Path="GeoUtil/GeoUtil.csproj" Id="9faeef5c-03e4-4b42-ae9f-793c59d94f77" />
   <Project Path="GeoUtilApp/GeoUtilApp.csproj" Id="6abfbbad-979d-4e9d-b8c1-ae3db8c2b53b" />
+  <Project Path="LCDController/LCDController.csproj" Id="e61050cd-f80c-4d85-a3f6-1bd2fae4e19c" />
   <Project Path="LEDController/LEDController.csproj" />
   <Project Path="MockSbsServer/MockSbsServer.csproj" Id="ee4b9456-1934-462e-8fbe-618eeac4d91e" />
   <Project Path="StepperMotorController/StepperMotorController.csproj" />
   <Project Path="TestAirCraftDetectorApp/TestAirCraftDetectorApp.csproj" Id="aa835253-442a-452d-be5a-122a35351055" />
+  <Project Path="TestLCD20x4App/TestLCD20x4App.csproj" Id="6f0f4995-5d01-47ef-8477-7e09d664c61c" />
   <Project Path="TestLEDApp/TestLEDApp.csproj" />
   <Project Path="TestStepperMotorApp/TestStepperMotorApp.csproj" />
 </Solution>
