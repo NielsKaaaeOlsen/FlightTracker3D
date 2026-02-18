@@ -47,6 +47,10 @@ scp -r publishCommon\* pi@raspberrypi:~/FlightTracker3D
 
 From Raspberry Pi:
 
+sudo raspi-config
+
+reboot
+
 cd FlightTracker3D/
 chmod +x ./TestLCD20x4App
 

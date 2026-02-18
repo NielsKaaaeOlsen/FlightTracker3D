@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace LCDController
 {
@@ -14,6 +15,7 @@ namespace LCDController
     {
         private readonly LCD20x4Controller _lcd20x4Controller;
         private CancellationTokenSource? _cts;
+        private readonly string _degreeSymbol; 
 
         private Task? _task;
 
@@ -22,6 +24,11 @@ namespace LCDController
             _cts = null;
             _task = null;
             _lcd20x4Controller = new LCD20x4Controller(mode);
+
+            if (mode == LcdHardwareMode.Real)
+                _degreeSymbol = "\xDF"; // Degree symbol for LCD display (custom character)
+            else
+                _degreeSymbol = "°"; // Regular degree symbol for console output
         }
 
         /// <summary>
@@ -34,25 +41,34 @@ namespace LCDController
 
         public void Dispose()
         {
-            _cts?.Cancel();
+            _CancelTrackingTask();
             _lcd20x4Controller.Dispose();
         }
 
+
+        public void Blank()
+        {
+            _CancelTrackingTask();
+            string[] lines = new string[] { "", "", "", "" };
+            _lcd20x4Controller.WriteDisplay(lines);
+        }
+
+
         public void NoTracks()
         {
-            _cts?.Cancel();
+            _CancelTrackingTask();
             string[] lines = new string[] { "", "     No tracks", "", "" };
             _lcd20x4Controller.WriteDisplay(lines);
         }
 
         public void ApproachingTarget(double az, double el)
         {
-            _cts?.Cancel();
+            _CancelTrackingTask();
             string compassDir = GetCompassDirection(az);
 
             string line0 = "Approaching position";
-            string line1 = string.Create(CultureInfo.InvariantCulture, $"AZ: {az,8:F1}° ({compassDir})");
-            string line2 = string.Create(CultureInfo.InvariantCulture, $"EL: {el,8:F1}°");
+            string line1 = string.Create(CultureInfo.InvariantCulture, $"AZ: {az,8:F1} {_degreeSymbol} ({compassDir})");
+            string line2 = string.Create(CultureInfo.InvariantCulture, $"EL: {el,8:F1} {_degreeSymbol}");
             string line3 = "";
 
             _lcd20x4Controller.WriteDisplay(new string[] { line0, line1, line2, line3 });
@@ -60,37 +76,19 @@ namespace LCDController
 
         public void AircraftTracking(double az, double el, double altMeter, double dist, string callsign, string icao)
         {
-            if (_task != null)
-            {
-                Console.WriteLine("Task Not NULL ! ! ! !");
-                _cts?.Cancel();
-                while (!_task.IsCompleted)
-                {
-                    Console.WriteLine("Task not Completed");
-                    Thread.Sleep(10); // Small delay to ensure the previous tracking task has been cancelled before starting a new one
-                }
-                Console.WriteLine("Task Completed");
-                _task = null;
-            }
-
+            _CancelTrackingTask();
             _task = Task.Run(() => AircraftTrackingAsync(az: az, el: el, altMeter: altMeter, dist: dist, callsign: callsign, icao: icao));
 
         }
 
         public async Task AircraftTrackingAsync(double az, double el, double altMeter, double dist, string callsign, string icao)
         {
-            //if (_cts != null)
-            //    Console.WriteLine("Not NULL ! ! ! !");
-            //_cts?.Cancel();
-            //_cts = null;
-
-
             string compassDir = GetCompassDirection(az);
 
-            string posLine0 = string.Create(CultureInfo.InvariantCulture, $"AZ  :{az,8:N1}° ({compassDir})");
-            string posLine1 = string.Create(CultureInfo.InvariantCulture, $"EL  :{el,8:N1}°");
-            string posLine2 = string.Create(CultureInfo.InvariantCulture, $"ALT :{altMeter,8:N1}m");  //TODO: F1 --> N1 
-            string posLine3 = string.Create(CultureInfo.InvariantCulture, $"DIST:{dist,8:N1}m");
+            string posLine0 = string.Create(CultureInfo.InvariantCulture, $"AZ  :{az,8:N1} {_degreeSymbol} ({compassDir})");
+            string posLine1 = string.Create(CultureInfo.InvariantCulture, $"EL  :{el,8:N1} {_degreeSymbol}");
+            string posLine2 = string.Create(CultureInfo.InvariantCulture, $"ALT :{altMeter,8:N1} m");  //TODO: F1 --> N1 
+            string posLine3 = string.Create(CultureInfo.InvariantCulture, $"DIST:{dist,8:N1} m");
             string[] posInfoLines = new string[] { posLine0, posLine1, posLine2, posLine3 };
 
             string flightInfoLine0 = string.Create(CultureInfo.InvariantCulture, $"Callsign: {callsign}");
@@ -115,13 +113,38 @@ namespace LCDController
                 }
                 catch (OperationCanceledException)
                 {
-                    Console.WriteLine("Delay cancelled!");
+                    //Console.WriteLine("Delay cancelled!");
                     break;
                 }
                 showPosInfo = !showPosInfo; // Toggle between position info and flight info
             }
             _cts = null;
         }
+
+
+        private void _CancelTrackingTask()
+        {
+            if (_task != null)
+            {
+                //Console.WriteLine("Cancelling Task...");
+                _cts?.Cancel();
+                int counter = 0;
+                while (!_task.IsCompleted)
+                {
+                    //Console.WriteLine("Waiting for Task to complete...");
+                    Thread.Sleep(10); // Small delay to ensure the previous tracking task has been cancelled before starting a new one
+                    counter++;
+                    if (counter > 100) // Timeout after 1 second
+                    {
+                        throw new TimeoutException("Task cancellation timeout. The tracking task did not complete within the expected time frame.");
+                    }
+                }
+                //Console.WriteLine("Task cancelled and completed.");
+                _task = null;
+            }
+        }
+
+
 
         /// <summary>
         /// Convert azimuth to compass direction text (8 directions)
