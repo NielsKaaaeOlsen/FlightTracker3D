@@ -57,7 +57,7 @@ namespace LCDController
             else
             {
                 Console.WriteLine("WriteDisplay");
-                Console.WriteLine("----X----X----X----X");
+                //Console.WriteLine("----X----X----X----X");
             }
 
             if (lines == null || lines.Length != 4)
