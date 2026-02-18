@@ -1,0 +1,53 @@
+18 febr 2026.
+
+Deploying LCD test application on Raspberry Pi:
+
+Build the Application in RELASE mode.
+
+Select TestLCD20x4App as startup project.
+
+IMPORTANT ! !
+In Solution Explorer select the TestLCD20x4App project 
+
+Build --> Publish --> Folder:
+	Target folder: ..\publishCommon\
+
+	Profile settings 
+		Deployment mode: Self contained
+		Runtime: linux-arm64
+
+
+
+
+Build --> Publish --> Click "Publish" button
+
+
+Here you find concise steps to enable passwordless SSH from your Windows machine to the Raspberry Pi (recommended: use ed25519 keys):
+	raspberry_pi_best_practice_start_guide.txt
+
+Copy to Raspberry Pi:
+
+/*  C:\Users\niels\source\repos\FlightTracker3D\publishCommon   */
+
+
+
+Open a powershell
+
+Navigate to the folder where the application is built.
+C:\Users\niels\source\repos\FlightTracker3D
+
+ssh pi@raspberrypi
+
+Create a folder for the application:
+mkdir FlightTracker3D
+
+From windows PC:
+scp -r publishCommon\* pi@raspberrypi:~/FlightTracker3D
+
+
+From Raspberry Pi:
+
+cd FlightTracker3D/
+chmod +x ./TestLCD20x4App
+
+

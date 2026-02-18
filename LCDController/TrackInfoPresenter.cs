@@ -15,9 +15,12 @@ namespace LCDController
         private readonly LCD20x4Controller _lcd20x4Controller;
         private CancellationTokenSource? _cts;
 
+        private Task? _task;
+
         public TrackInfoPresenter(LcdHardwareMode mode)
         {
             _cts = null;
+            _task = null;
             _lcd20x4Controller = new LCD20x4Controller(mode);
         }
 
@@ -57,12 +60,31 @@ namespace LCDController
 
         public void AircraftTracking(double az, double el, double altMeter, double dist, string callsign, string icao)
         {
-            _cts?.Cancel();
-            Task task = Task.Run(() => AircraftTrackingAsync(az: az, el: el, altMeter: altMeter, dist: dist, callsign: callsign, icao: icao));
+            if (_task != null)
+            {
+                Console.WriteLine("Task Not NULL ! ! ! !");
+                _cts?.Cancel();
+                while (!_task.IsCompleted)
+                {
+                    Console.WriteLine("Task not Completed");
+                    Thread.Sleep(10); // Small delay to ensure the previous tracking task has been cancelled before starting a new one
+                }
+                Console.WriteLine("Task Completed");
+                _task = null;
+            }
+
+            _task = Task.Run(() => AircraftTrackingAsync(az: az, el: el, altMeter: altMeter, dist: dist, callsign: callsign, icao: icao));
+
         }
 
         public async Task AircraftTrackingAsync(double az, double el, double altMeter, double dist, string callsign, string icao)
         {
+            //if (_cts != null)
+            //    Console.WriteLine("Not NULL ! ! ! !");
+            //_cts?.Cancel();
+            //_cts = null;
+
+
             string compassDir = GetCompassDirection(az);
 
             string posLine0 = string.Create(CultureInfo.InvariantCulture, $"AZ  :{az,8:N1}° ({compassDir})");
@@ -79,23 +101,26 @@ namespace LCDController
 
             // Create CancellationTokenSource
             _cts = new CancellationTokenSource();
+
+            bool showPosInfo = true;
             while (true)
             {
                 try
                 {
-                    _lcd20x4Controller.WriteDisplay(posInfoLines);
-                    Task.Delay(2000, _cts.Token).GetAwaiter().GetResult();
-                    _lcd20x4Controller.WriteDisplay(flightInfoLines);
-                    Task.Delay(1000, _cts.Token).GetAwaiter().GetResult();
+                    if (showPosInfo)
+                        _lcd20x4Controller.WriteDisplay(posInfoLines);
+                    else
+                        _lcd20x4Controller.WriteDisplay(flightInfoLines);
+                    Task.Delay(showPosInfo ? 2000 : 1000, _cts.Token).GetAwaiter().GetResult();
                 }
                 catch (OperationCanceledException)
                 {
                     Console.WriteLine("Delay cancelled!");
                     break;
                 }
+                showPosInfo = !showPosInfo; // Toggle between position info and flight info
             }
             _cts = null;
-
         }
 
         /// <summary>
