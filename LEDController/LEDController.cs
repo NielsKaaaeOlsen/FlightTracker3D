@@ -2,26 +2,60 @@
 
 namespace LEDController
 {
+    /// <summary>
+    /// Specifies the hardware execution mode for LED control.
+    /// </summary>
     public enum LedHardwareMode
     {
+        /// <summary>
+        /// Control real GPIO hardware.
+        /// </summary>
         Real,
+        
+        /// <summary>
+        /// Emulated mode for testing without hardware (outputs to console).
+        /// </summary>
         Emulated
     }
+
+    /// <summary>
+    /// Controls a single LED connected to a GPIO pin with support for on/off/blinking states.
+    /// Supports both real hardware and emulated mode for development/testing.
+    /// </summary>
     public class LEDController : IDisposable
     {
-        private LEDState _currentState;
+        /// <summary>
+        /// Defines the possible states of an LED.
+        /// </summary>
+        public enum LEDState
+        {
+            /// <summary>
+            /// LED is turned off.
+            /// </summary>
+            Off,
+            
+            /// <summary>
+            /// LED is blinking on and off at 1 Hz (1 second intervals).
+            /// </summary>
+            Blinking,
+            
+            /// <summary>
+            /// LED is constantly on.
+            /// </summary>
+            On
+        }
 
+        private LEDState _currentState;
         private GpioController _gpioController;
         private LedHardwareMode _hardwareMode;
         private bool _isBlinkingOn;
         private int _ledPin;
 
-        public enum LEDState
-        {
-            Off,
-            Blinking,
-            On
-        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LEDController"/> class.
+        /// </summary>
+        /// <param name="ledPin">GPIO pin number where the LED is connected.</param>
+        /// <param name="mode">Hardware mode (Real or Emulated).</param>
         public LEDController(int ledPin, LedHardwareMode mode)
         {
             _ledPin = ledPin;
@@ -32,27 +66,30 @@ namespace LEDController
             {
                 _gpioController = new GpioController();
             }
-
-
         }
 
-        public void Dispose()
-        {
-            if (_hardwareMode == LedHardwareMode.Real)
-            {
-                ((IDisposable)_gpioController).Dispose();
-            }
-        }
-
+        /// <summary>
+        /// Initializes the LED controller and configures the GPIO pin as output.
+        /// Must be called before using <see cref="SetState(LEDState)"/>.
+        /// </summary>
         public void Initialize()
         {
             if (_hardwareMode == LedHardwareMode.Real)
             {
-                //-- Set pin mode
                 _gpioController.OpenPin(_ledPin, PinMode.Output);
             }
             SetState(_currentState);
         }
+
+        /// <summary>
+        /// Sets the LED state (Off, On, or Blinking).
+        /// </summary>
+        /// <param name="state">The desired LED state.</param>
+        /// <remarks>
+        /// In Blinking mode, the LED toggles every second on a background thread.
+        /// Call <see cref="SetState(LEDState)"/> with <see cref="LEDState.Off"/> or 
+        /// <see cref="LEDState.On"/> to stop blinking.
+        /// </remarks>
         public void SetState(LEDState state)
         {
             _currentState = state;
@@ -66,15 +103,17 @@ namespace LEDController
                     else
                         Console.WriteLine("LED is off (emulated mode).");
                     break;
+
                 case LEDState.On:
                     if (_hardwareMode == LedHardwareMode.Real)
                         _gpioController.Write(_ledPin, PinValue.High);
                     else
                         Console.WriteLine("LED is on (emulated mode).");
                     break;
+
                 case LEDState.Blinking:
                     _isBlinkingOn = true;
-                    Task task = Task.Run(() =>
+                    Task.Run(() =>
                     {
                         while (_currentState == LEDState.Blinking)
                         {
@@ -82,15 +121,25 @@ namespace LEDController
                             if (_hardwareMode == LedHardwareMode.Real)
                                 _gpioController.Write(_ledPin, _isBlinkingOn ? PinValue.High : PinValue.Low);
                             else
-                                Console.WriteLine($"LED is {(_isBlinkingOn ? "On": "off ")}(emulated mode).");
+                                Console.WriteLine($"LED is {(_isBlinkingOn ? "On" : "off")} (emulated mode).");
 
-                            Thread.Sleep(1000); // Simulate blinking every second
-                            _isBlinkingOn = !_isBlinkingOn; // Toggle the blinking state
+                            Thread.Sleep(1000);
+                            _isBlinkingOn = !_isBlinkingOn;
                         }
                     });
                     break;
-                default:
-                    break;
+            }
+        }
+
+        /// <summary>
+        /// Releases all resources used by the <see cref="LEDController"/>.
+        /// Disposes the GPIO controller if in Real mode.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_hardwareMode == LedHardwareMode.Real)
+            {
+                _gpioController?.Dispose();
             }
         }
     }

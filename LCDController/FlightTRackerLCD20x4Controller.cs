@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace LCDController
 {
+    // FlighttrackInfoLcdPresenter  or FlightTRackerLCD20x4Presenter
     public class FlightTRackerLCD20x4Controller : IDisposable
     {
         private readonly LCD20x4Controller _lcd20x4Controller;
@@ -65,39 +66,58 @@ DIST: 12345.1m         */
 
             _lcd20x4Controller.WriteDisplay(new string[] { line0, line1, line2, line3 });
 
+
+            /*
+FlightTrackerLcdPresenter 
+•	✅ Følger MVP (Model-View-Presenter) pattern
+•	✅ Klar rolle: Formaterer og præsenterer flight data til LCD
+•	✅ Adskiller presentation logic fra hardware control
+Andre gode alternativer:
+Pattern-baseret:
+•	FlightTrackerLcdAdapter — Adapter pattern (konverterer flight data til LCD format)
+•	FlightTrackerLcdFacade — Facade pattern (forenkler kompleks LCD API)
+•	FlightTrackerLcdFormatter — Fokuserer på formatering
+Display-orienteret:
+•	FlightTrackerDisplay — Simpelt, generisk
+•	FlightTrackerLcdView — View layer i MVC/MVP
+•	FlightTrackerDisplay20x4 — Inkluderer display størrelse
+Kontekst-specifik:
+•	AircraftTrackingDisplay — Beskriver hvad der vises
+•	FlightInfoDisplay — Fokuserer på information type
+*/
             //TODO: Callsign, icao, from to
             //Task 
 
             //CODE #1
-                //// Opret CancellationTokenSource
-                //var cts = new CancellationTokenSource();
+            //// Opret CancellationTokenSource
+            //var cts = new CancellationTokenSource();
 
-                //// Start task med token
-                //var task = Task.Run(() => DoWorkAsync(cts.Token));
+            //// Start task med token
+            //var task = Task.Run(() => DoWorkAsync(cts.Token));
 
-                //// Cancel efter 5 sekunder
-                //await Task.Delay(5000);
-                //cts.Cancel();
+            //// Cancel efter 5 sekunder
+            //await Task.Delay(5000);
+            //cts.Cancel();
 
-                //// Await task completion
-                //await task;
+            //// Await task completion
+            //await task;
 
             //CODE #2
-                //await Task.Delay(10000, cancellationToken);
+            //await Task.Delay(10000, cancellationToken);
 
-                //// Brug:
-                //var cts = new CancellationTokenSource();
-                //try
-                //{
-                //    await Task.Delay(10000, cts.Token);
-                //}
-                //catch (OperationCanceledException)
-                //{
-                //    Console.WriteLine("Delay cancelled!");
-                //}
+            //// Brug:
+            //var cts = new CancellationTokenSource();
+            //try
+            //{
+            //    await Task.Delay(10000, cts.Token);
+            //}
+            //catch (OperationCanceledException)
+            //{
+            //    Console.WriteLine("Delay cancelled!");
+            //}
 
-                // Cancel fra anden tråd:
-                //cts.Cancel();  // Hopper ud af Task.Delay med det samme
+            // Cancel fra anden tråd:
+            //cts.Cancel();  // Hopper ud af Task.Delay med det samme
 
             //Pickup from to from Web
 
