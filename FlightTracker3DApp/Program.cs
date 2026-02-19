@@ -1,5 +1,6 @@
 ﻿
 using FlightTracker3D;
+using FlightTracker3DApp;
 using HardwareMode;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -18,24 +19,20 @@ var config = new ConfigurationBuilder()
     .Build();
 
 // Dump configuration from AxElControllerSettings
-var controllerSettings = config.GetSection("AxElControllerSettings").Get<AxElControllerSettings>();
+var appSettings = config.GetSection("FlightTracker3DAppSettings").Get<FlightTracker3DAppSettings>();
 
-if (controllerSettings == null)
-{ Console.WriteLine("Error: AxElControllerSettings is invalid in appsettings.json."); return; }
+if (appSettings == null)
+{ Console.WriteLine("Error: FlightTracker3DAppSettings is invalid in appsettings.json."); return; }
 
-Console.WriteLine($"MinimumLogLevel: {controllerSettings.MinimumLogLevel}");
-Console.WriteLine($"HardwareMode: {controllerSettings.HardwareMode}");
-Console.WriteLine($"MicrosteppingMode: {controllerSettings.MicrosteppingMode}");
-Console.WriteLine($"MotoComamnds:");
-foreach (var command in controllerSettings.MoveToCommands)
-{
-    Console.WriteLine($"   MotorComamnd: az={command.Az}, el={command.El}, duration={command.Duration} sec");
-}
+Console.WriteLine($"MinimumLogLevel: {appSettings.MinimumLogLevel}");
+Console.WriteLine($"LCD HardwareMode: {appSettings.HardwareModes.LcdHardwareMode}");
+Console.WriteLine($"LED HardwareMode: {appSettings.HardwareModes.LedHardwareMode}");
+Console.WriteLine($"Steppper HardwareMode: {appSettings.HardwareModes.StepperMotorHardwareMode}");
 
 var loggerFactory = LoggerFactory.Create(builder =>
 {
     builder
-        .SetMinimumLevel(controllerSettings.MinimumLogLevel)
+        .SetMinimumLevel(appSettings.MinimumLogLevel)
         .AddSimpleConsole(options => { options.TimestampFormat = "[HH:mm:ss.fff] "; /*options.IncludeScopes = true;*/ })
         ;
 });
@@ -50,7 +47,6 @@ HardwareModes hardwareModes = new HardwareModes(
     lcdHardwareMode: HardwareModeEnum.Emulated, 
     ledHardwareMode: HardwareModeEnum.Emulated,
     stepperMotorHardwareMode: HardwareModeEnum.Emulated);
-
 
 using (FlightTracker3D.FlightTracking flightTracking = new FlightTracker3D.FlightTracking(hardwareModes, loggerFactory))
 {
