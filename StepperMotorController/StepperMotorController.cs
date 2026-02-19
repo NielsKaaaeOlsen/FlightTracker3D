@@ -89,7 +89,7 @@ namespace StepperMotorController
             switch(mode)
             {
                 case MicrosteppingMode.M32:
-                    if (_hardwareMode == HardwareMode.Real)
+                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
                     {
                         _gpioController.Write(_pins.M0Pin, PinValue.High);
                         _gpioController.Write(_pins.M1Pin, PinValue.Low);
