@@ -88,7 +88,7 @@ namespace LCDController
 
             string posLine0 = string.Create(CultureInfo.InvariantCulture, $"AZ  :{az,8:N1} {_degreeSymbol} ({compassDir})");
             string posLine1 = string.Create(CultureInfo.InvariantCulture, $"EL  :{el,8:N1} {_degreeSymbol}");
-            string posLine2 = string.Create(CultureInfo.InvariantCulture, $"ALT :{altMeter,8:N1} m");  //TODO: F1 --> N1 
+            string posLine2 = string.Create(CultureInfo.InvariantCulture, $"ALT :{altMeter,8:N1} m");
             string posLine3 = string.Create(CultureInfo.InvariantCulture, $"DIST:{dist,8:N1} m");
             string[] posInfoLines = new string[] { posLine0, posLine1, posLine2, posLine3 };
 
