@@ -52,7 +52,7 @@ HardwareModes hardwareModes = new HardwareModes(
     stepperMotorHardwareMode: HardwareModeEnum.Emulated);
 
 
-FlightTracker3D.FlightTracking flightTracking = new FlightTracker3D.FlightTracking(hardwareModes, loggerFactory);
-
-await flightTracking.StartTrackingAsync();
-
+using (FlightTracker3D.FlightTracking flightTracking = new FlightTracker3D.FlightTracking(hardwareModes, loggerFactory))
+{
+    await flightTracking.StartTrackingAsync();
+}

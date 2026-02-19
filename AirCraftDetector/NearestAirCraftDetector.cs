@@ -23,7 +23,7 @@ namespace AirCraftDetector
             _referencePoint = referencePoint;
         }
 
-        public async Task Initialize()
+        public async Task StartTrackingAsync()
         {
             Task task = Task.Run(() => _airCraftListener.ListenForAircraftAsync());
 

@@ -59,7 +59,7 @@ static class SimpleTestCases
 
         var nearestAirCraftDetector = new NearestAirCraftDetector(host, port, referencePoint);
 
-        Task task = nearestAirCraftDetector.Initialize();
+        Task task = nearestAirCraftDetector.StartTrackingAsync();
 
         while (true)
         {

@@ -52,7 +52,7 @@ namespace StepperMotorController
             _aziumuthController.SetMicrostepping(mode);
             _elevationController.SetMicrostepping(mode);
         }
-        public void MoveTo(double azimuthDegrees, double elevationDegrees, double durationSeconds = 0)
+        public void MoveToAzEl(double azimuthDegrees, double elevationDegrees, double durationSeconds = 0)
         {
             //Validate angles
             if (azimuthDegrees < 0 || azimuthDegrees >= 360) 
@@ -124,7 +124,6 @@ namespace StepperMotorController
             _currentAzStep = targetAzStep;
             _currentElStep = targetElStep;
         }
-
 
         void IDisposable.Dispose()
         {
