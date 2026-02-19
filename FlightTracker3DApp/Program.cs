@@ -39,16 +39,11 @@ var loggerFactory = LoggerFactory.Create(builder =>
 
 DateTime start = DateTime.Now;
 
-ILogger logger = loggerFactory.CreateLogger("Azimuth Elevation Stepper Motors");
-logger.LogInformation("StepMotorApp started");
+ILogger logger = loggerFactory.CreateLogger("Flight Tracker 3D App");
+logger.LogInformation("Flight Tracker 3D App started");
 
 
-HardwareModes hardwareModes = new HardwareModes(
-    lcdHardwareMode: HardwareModeEnum.Emulated, 
-    ledHardwareMode: HardwareModeEnum.Emulated,
-    stepperMotorHardwareMode: HardwareModeEnum.Emulated);
-
-using (FlightTracker3D.FlightTracking flightTracking = new FlightTracker3D.FlightTracking(hardwareModes, loggerFactory))
+using (FlightTracker3D.FlightTracking flightTracking = new FlightTracker3D.FlightTracking(appSettings.HardwareModes, loggerFactory))
 {
     await flightTracking.StartTrackingAsync();
 }

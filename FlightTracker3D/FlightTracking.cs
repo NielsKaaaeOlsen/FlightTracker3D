@@ -109,9 +109,9 @@ namespace FlightTracker3D
 
                 DateTime loopEnd = DateTime.Now;
                 TimeSpan loopDuration = loopEnd - loopStart;
-                if (loopDuration.TotalMilliseconds > 1000)
+                if (loopDuration.TotalMilliseconds < 1000)
                 {
-                    double delayMilliSec = (loopDuration.TotalMilliseconds - 1000);
+                    double delayMilliSec = (1000 - loopDuration.TotalMilliseconds);
                     await Task.Delay((int)delayMilliSec); 
                 }
             }
