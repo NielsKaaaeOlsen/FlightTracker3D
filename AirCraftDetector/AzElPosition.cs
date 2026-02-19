@@ -24,12 +24,13 @@ namespace AirCraftDetector
         /// <summary>
         /// Optional distance from observer in meters
         /// </summary>
-        public double? Distance { get; set; }
+        public double Distance { get; set; }
 
 
         public override string ToString()
         {
-            return $"Azimuth: {Azimuth:F1}°, Elevation: {Elevation:F1}°, Distance: {(Distance.HasValue ? $"{Distance.Value:F1} m" : "N/A")}";
+            //return $"Azimuth: {Azimuth:F1}°, Elevation: {Elevation:F1}°, Distance: {(Distance.HasValue ? $"{Distance.Value:F1} m" : "N/A")}";
+            return $"Azimuth: {Azimuth:F1}°, Elevation: {Elevation:F1}°, Distance: {Distance:F1} m";
         }
     }
 }

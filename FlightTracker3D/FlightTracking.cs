@@ -34,13 +34,14 @@ namespace FlightTracker3D
             _ledController = new FlightTrackerLEDController(hardwareModes.LedHardwareMode);
             _azElController = new AzElController(loggerFactory, hardwareModes.StepperMotorHardwareMode);
 
+            _azElController.SetMicrostepping(MicrosteppingMode.M8);  //TODO: make this configurable
         }
 
         void IDisposable.Dispose()
         {
             _lcdController.Dispose();
             _ledController.Dispose();
-            //_azElController.Dispose();  //TODO:  ? ? ? ? ? ? ?
+            _azElController.Dispose();
         }
 
         public async Task StartTrackingAsync()
@@ -75,11 +76,15 @@ namespace FlightTracker3D
                     {
                         if (formerIcao == nearestAirCraftResult.AircraftTrack.Icao)
                         {
-                            //-- same aircraft, update position
+                            //-- same aircraft, update position only
                             double durationSec = 1;
+                            string callsign = nearestAirCraftResult.AircraftTrack.Callsign;
+                            string icao = nearestAirCraftResult.AircraftTrack.Icao;
                             double azimuth = nearestAirCraftResult.AircraftAzElPosition.Azimuth;
                             double elevation = nearestAirCraftResult.AircraftAzElPosition.Elevation;
-                            _lcdController.ApproachingTarget(azimuth, elevation);  //TODO: Sludder??????
+                            double distanceMeter = nearestAirCraftResult.AircraftAzElPosition.Distance;
+                            double altitudeMeter = nearestAirCraftResult.AircraftTrack.History.Last<PositionPoint>().AltitudeMeters;
+                            _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
                             _ledController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
                             _azElController.MoveToAzEl(azimuth, elevation, durationSec);
                         }

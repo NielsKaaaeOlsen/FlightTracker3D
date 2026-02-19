@@ -10,8 +10,6 @@ namespace StepperMotorController
 {
     public class AzElController : IDisposable
     {
-
-
         private readonly StepperMotorController _aziumuthController;
         private readonly StepperMotorController _elevationController;
 
@@ -125,7 +123,7 @@ namespace StepperMotorController
             _currentElStep = targetElStep;
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             _aziumuthController.Dispose();
             _elevationController.Dispose();
