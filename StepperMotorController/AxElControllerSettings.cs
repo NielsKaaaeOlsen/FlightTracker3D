@@ -10,7 +10,7 @@ namespace StepperMotorController
     public class AxElControllerSettings
     {
         public required LogLevel MinimumLogLevel { get; set; }
-        public required HardwareMode HardwareMode { get; set; }
+        public required HardwareMode.HardwareMode HardwareMode { get; set; }
         public required MicrosteppingMode MicrosteppingMode { get; set; }
 
         public required List<MoveToCommand> MoveToCommands { get; set; }

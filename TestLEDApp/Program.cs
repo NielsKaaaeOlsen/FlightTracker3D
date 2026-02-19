@@ -4,7 +4,7 @@ Console.WriteLine("Red LED controlled by LEDController");
 
 int ledPin = 16; // GPIO pin number for the LED
 
-LedHardwareMode mode= LedHardwareMode.Real; // Change to Real for actual hardware
+HardwareMode.HardwareMode mode= HardwareMode.HardwareMode.Real; // Change to Real for actual hardware
 
 using (LEDController.LEDController led = new LEDController.LEDController(ledPin, mode))
 {

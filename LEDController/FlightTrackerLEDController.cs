@@ -25,7 +25,7 @@ namespace LEDController
         private readonly int _greenPin = 21;
 
 
-        public FlightTrackerLEDController(LedHardwareMode mode)
+        public FlightTrackerLEDController(HardwareMode.HardwareMode mode)
         {
             _redLedController = new LEDController(_redPin, mode); 
             _yellowLedController = new LEDController(_yellowPin, mode);

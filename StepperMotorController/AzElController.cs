@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HardwareMode;
 
 namespace StepperMotorController
 {
@@ -18,9 +19,9 @@ namespace StepperMotorController
         private int _currentElStep;
 
         private ILogger _logger;
-        private HardwareMode _hardwareMode;
+        private HardwareMode.HardwareMode _hardwareMode;
 
-        public AzElController(ILoggerFactory loggerFactory, HardwareMode mode)
+        public AzElController(ILoggerFactory loggerFactory, HardwareMode.HardwareMode mode)
         {
             _logger = loggerFactory.CreateLogger($"{typeof(AzElController).Name}");
 

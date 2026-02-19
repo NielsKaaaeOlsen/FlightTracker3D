@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using HardwareMode;
 
 namespace LCDController
 {
@@ -19,13 +20,13 @@ namespace LCDController
 
         private Task? _task;
 
-        public TrackInfoPresenter(LcdHardwareMode mode)
+        public TrackInfoPresenter(HardwareMode.HardwareMode mode)
         {
             _cts = null;
             _task = null;
             _lcd20x4Controller = new LCD20x4Controller(mode);
 
-            if (mode == LcdHardwareMode.Real)
+            if (mode == HardwareMode.HardwareMode.Real)
                 _degreeSymbol = "\xDF"; // Degree symbol for LCD display (custom character)
             else
                 _degreeSymbol = "°"; // Regular degree symbol for console output

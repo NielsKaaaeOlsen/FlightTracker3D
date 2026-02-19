@@ -2,7 +2,7 @@
 
 Console.WriteLine("Testing FlightTracker LCD 20x4C ontroller ");
 
-LcdHardwareMode mode = LcdHardwareMode.Real; // Change to Real for actual hardware
+HardwareMode.HardwareMode mode = HardwareMode.HardwareMode.Real; // Change to Real for actual hardware
 
 using (TrackInfoPresenter lcdPresenter = new TrackInfoPresenter(mode))
 {

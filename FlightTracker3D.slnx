@@ -1,7 +1,10 @@
 <Solution>
   <Project Path="AirCraftDetector/AirCraftDetector.csproj" Id="b09d0b22-813e-49bc-b587-d55ced148d97" />
+  <Project Path="FlightTracker3D/FlightTracker3D.csproj" Id="8f4fec3e-fe5f-4c81-abeb-1fb64c3fde33" />
+  <Project Path="FlightTracker3DApp/FlightTracker3DApp.csproj" Id="b4395064-e6d6-4bef-8813-87a94b80574a" />
   <Project Path="GeoUtil/GeoUtil.csproj" Id="9faeef5c-03e4-4b42-ae9f-793c59d94f77" />
   <Project Path="GeoUtilApp/GeoUtilApp.csproj" Id="6abfbbad-979d-4e9d-b8c1-ae3db8c2b53b" />
+  <Project Path="HardwareMode/HardwareMode.csproj" Id="71513ba7-9ef8-4eac-9420-8f700e0c2389" />
   <Project Path="LCDController/LCDController.csproj" Id="e61050cd-f80c-4d85-a3f6-1bd2fae4e19c" />
   <Project Path="LEDController/LEDController.csproj" />
   <Project Path="MockSbsServer/MockSbsServer.csproj" Id="ee4b9456-1934-462e-8fbe-618eeac4d91e" />

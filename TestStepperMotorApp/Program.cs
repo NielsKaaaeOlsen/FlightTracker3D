@@ -69,7 +69,7 @@ else
 {
     try
     {
-        using (var azElController = new AzElController(loggerFactory, HardwareMode.Emulated))
+        using (var azElController = new AzElController(loggerFactory, HardwareMode.HardwareMode.Emulated))
         {
             azElController.Initialize();
             double azMoveTo = 4.5;

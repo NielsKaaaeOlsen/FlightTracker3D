@@ -1,23 +1,8 @@
 ﻿using System.Device.Gpio;
+using HardwareMode;
 
 namespace LEDController
 {
-    /// <summary>
-    /// Specifies the hardware execution mode for LED control.
-    /// </summary>
-    public enum LedHardwareMode
-    {
-        /// <summary>
-        /// Control real GPIO hardware.
-        /// </summary>
-        Real,
-        
-        /// <summary>
-        /// Emulated mode for testing without hardware (outputs to console).
-        /// </summary>
-        Emulated
-    }
-
     /// <summary>
     /// Controls a single LED connected to a GPIO pin with support for on/off/blinking states.
     /// Supports both real hardware and emulated mode for development/testing.
@@ -47,7 +32,7 @@ namespace LEDController
 
         private LEDState _currentState;
         private GpioController _gpioController;
-        private LedHardwareMode _hardwareMode;
+        private HardwareMode.HardwareMode _hardwareMode;
         private bool _isBlinkingOn;
         private int _ledPin;
 
@@ -56,13 +41,13 @@ namespace LEDController
         /// </summary>
         /// <param name="ledPin">GPIO pin number where the LED is connected.</param>
         /// <param name="mode">Hardware mode (Real or Emulated).</param>
-        public LEDController(int ledPin, LedHardwareMode mode)
+        public LEDController(int ledPin, HardwareMode.HardwareMode mode)
         {
             _ledPin = ledPin;
             _hardwareMode = mode;
             _currentState = LEDState.Off;
 
-            if (_hardwareMode == LedHardwareMode.Real)
+            if (_hardwareMode == HardwareMode.HardwareMode.Real)
             {
                 _gpioController = new GpioController();
             }
@@ -74,7 +59,7 @@ namespace LEDController
         /// </summary>
         public void Initialize()
         {
-            if (_hardwareMode == LedHardwareMode.Real)
+            if (_hardwareMode == HardwareMode.HardwareMode.Real)
             {
                 _gpioController.OpenPin(_ledPin, PinMode.Output);
             }
@@ -98,14 +83,14 @@ namespace LEDController
             switch (_currentState)
             {
                 case LEDState.Off:
-                    if (_hardwareMode == LedHardwareMode.Real)
+                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
                         _gpioController.Write(_ledPin, PinValue.Low);
                     else
                         Console.WriteLine("LED is off (emulated mode).");
                     break;
 
                 case LEDState.On:
-                    if (_hardwareMode == LedHardwareMode.Real)
+                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
                         _gpioController.Write(_ledPin, PinValue.High);
                     else
                         Console.WriteLine("LED is on (emulated mode).");
@@ -118,7 +103,7 @@ namespace LEDController
                         while (_currentState == LEDState.Blinking)
                         {
                             Console.WriteLine($"LED is blinking... {_isBlinkingOn}");
-                            if (_hardwareMode == LedHardwareMode.Real)
+                            if (_hardwareMode == HardwareMode.HardwareMode.Real)
                                 _gpioController.Write(_ledPin, _isBlinkingOn ? PinValue.High : PinValue.Low);
                             else
                                 Console.WriteLine($"LED is {(_isBlinkingOn ? "On" : "off")} (emulated mode).");
@@ -137,7 +122,7 @@ namespace LEDController
         /// </summary>
         public void Dispose()
         {
-            if (_hardwareMode == LedHardwareMode.Real)
+            if (_hardwareMode == HardwareMode.HardwareMode.Real)
             {
                 _gpioController?.Dispose();
             }

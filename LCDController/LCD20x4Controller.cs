@@ -3,16 +3,11 @@ using Iot.Device.Pcx857x;
 using Iot.Device.Vl53L1X;
 using System.Device.Gpio;
 using System.Device.I2c;
+using HardwareMode;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace LCDController
 {
-    public enum LcdHardwareMode
-    {
-        Real,
-        Emulated
-    }
-
     public class LCD20x4Controller : IDisposable
     {
         private I2cDevice? _i2cLcd;
@@ -20,15 +15,15 @@ namespace LCDController
         private Lcd2004? _lcd;
         private GpioController? _gpioController;
 
-        private readonly LcdHardwareMode _hardwareMode;
+        private readonly HardwareMode.HardwareMode _hardwareMode;
 
-        public LCD20x4Controller(LcdHardwareMode mode)
+        public LCD20x4Controller(HardwareMode.HardwareMode mode)
         {
             _hardwareMode = mode;
         }
         public void Initialize()
         {
-            if (_hardwareMode == LcdHardwareMode.Real)
+            if (_hardwareMode == HardwareMode.HardwareMode.Real)
             {
                 _i2cLcd = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
                 _driver = new Pcf8574(_i2cLcd);
@@ -52,7 +47,7 @@ namespace LCDController
 
         public void WriteDisplay(string[] lines)
         {
-            if (_hardwareMode == LcdHardwareMode.Real)
+            if (_hardwareMode == HardwareMode.HardwareMode.Real)
                 _lcd.Clear();
             else
             {
@@ -65,7 +60,7 @@ namespace LCDController
 
             for (int i = 0; i < lines.Length; i++)
             {
-                if (_hardwareMode == LcdHardwareMode.Real)
+                if (_hardwareMode == HardwareMode.HardwareMode.Real)
                 {
                     _lcd.SetCursorPosition(0, i);
                     _lcd.Write(lines[i] ?? string.Empty);
