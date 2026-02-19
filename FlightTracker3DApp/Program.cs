@@ -1,5 +1,6 @@
 ﻿
 using FlightTracker3D;
+using HardwareMode;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using StepperMotorController;
@@ -46,9 +47,9 @@ logger.LogInformation("StepMotorApp started");
 
 
 HardwareModes hardwareModes = new HardwareModes(
-    lcdHardwareMode: HardwareMode.HardwareMode.Emulated, 
-    ledHardwareMode: HardwareMode.HardwareMode.Emulated,
-    stepperMotorHardwareMode: HardwareMode.HardwareMode.Emulated);
+    lcdHardwareMode: HardwareModeEnum.Emulated, 
+    ledHardwareMode: HardwareModeEnum.Emulated,
+    stepperMotorHardwareMode: HardwareModeEnum.Emulated);
 
 
 FlightTracker3D.FlightTracking flightTracking = new FlightTracker3D.FlightTracking(hardwareModes, loggerFactory);

@@ -19,9 +19,9 @@ namespace StepperMotorController
         private int _currentElStep;
 
         private ILogger _logger;
-        private HardwareMode.HardwareMode _hardwareMode;
+        private HardwareModeEnum _hardwareMode;
 
-        public AzElController(ILoggerFactory loggerFactory, HardwareMode.HardwareMode mode)
+        public AzElController(ILoggerFactory loggerFactory, HardwareModeEnum mode)
         {
             _logger = loggerFactory.CreateLogger($"{typeof(AzElController).Name}");
 

@@ -16,9 +16,9 @@ namespace StepperMotorController
         private int _microStepsPerStep;
         private double _degreesPerStep;
         private readonly ILogger _logger;
-        private HardwareMode.HardwareMode _hardwareMode;
+        private HardwareModeEnum _hardwareMode;
 
-        public StepperMotorController(ILoggerFactory loggerFactory, StepperMotorPins pins, string instanceId, HardwareMode.HardwareMode mode)
+        public StepperMotorController(ILoggerFactory loggerFactory, StepperMotorPins pins, string instanceId, HardwareModeEnum mode)
         {
             _logger = loggerFactory.CreateLogger($"{typeof(StepperMotorController).Name}:{instanceId}");
 
@@ -26,7 +26,7 @@ namespace StepperMotorController
             _pins = pins;
             _microSteppingMode = MicrosteppingMode.M8;  // Default to 1/8 microstepping for MoveTo speed
 
-            if (_hardwareMode == HardwareMode.HardwareMode.Real)
+            if (_hardwareMode == HardwareModeEnum.Real)
             {
                 _gpioController = new GpioController();
             }
@@ -39,7 +39,7 @@ namespace StepperMotorController
                 "Initializing Stepper Motor on Pins: Step={StepPin}, Dir={DirPin}, M0={M0Pin}, M1={M1Pin}, M2={M2Pin}",
                 _pins.StepPin, _pins.DirPin, _pins.M0Pin, _pins.M1Pin, _pins.M2Pin);
 
-            if (_hardwareMode == HardwareMode.HardwareMode.Real)
+            if (_hardwareMode == HardwareModeEnum.Real)
             {
                 //-- Set pin mode
                 _gpioController.OpenPin(_pins.StepPin, PinMode.Output);
@@ -90,7 +90,7 @@ namespace StepperMotorController
             switch(mode)
             {
                 case MicrosteppingMode.M32:
-                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
+                    if (_hardwareMode == HardwareModeEnum.Real)
                     {
                         _gpioController.Write(_pins.M0Pin, PinValue.High);
                         _gpioController.Write(_pins.M1Pin, PinValue.Low);
@@ -100,7 +100,7 @@ namespace StepperMotorController
                     break;
 
                 case MicrosteppingMode.M8:
-                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
+                    if (_hardwareMode == HardwareModeEnum.Real)
                     {
                         _gpioController.Write(_pins.M0Pin, PinValue.High);
                         _gpioController.Write(_pins.M1Pin, PinValue.High);
@@ -110,7 +110,7 @@ namespace StepperMotorController
                     break;
 
                 case MicrosteppingMode.M4:
-                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
+                    if (_hardwareMode == HardwareModeEnum.Real)
                     {
                         _gpioController.Write(_pins.M0Pin, PinValue.Low);
                         _gpioController.Write(_pins.M1Pin, PinValue.High);
@@ -120,7 +120,7 @@ namespace StepperMotorController
                     break;
 
                 case MicrosteppingMode.M2:
-                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
+                    if (_hardwareMode == HardwareModeEnum.Real)
                     {
                         _gpioController.Write(_pins.M0Pin, PinValue.High);  
                         _gpioController.Write(_pins.M1Pin, PinValue.Low);
@@ -159,7 +159,7 @@ namespace StepperMotorController
 
             //-- Set direction pin values  -->  Retning: High = CW, Low = CCW (afhænger af kabler) 
             PinValue dirValue = forward ? PinValue.High : PinValue.Low;
-            if (_hardwareMode == HardwareMode.HardwareMode.Real)
+            if (_hardwareMode == HardwareModeEnum.Real)
                 _gpioController.Write(_pins.DirPin, dirValue);
 
             //-- Set microsteppings pin values
@@ -170,12 +170,12 @@ namespace StepperMotorController
                 {
                     _logger.LogDebug("iStep={iStep}, iMicroStep={iMicroStep}, pinVal=HIGH", iStep, iMicroStep);
                     // Set the step pin high
-                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
+                    if (_hardwareMode == HardwareModeEnum.Real)
                         _gpioController.Write(_pins.StepPin, PinValue.High);
                     DelayMilliSeconds(delayHigh);
                     // Set the step pin low
                     _logger.LogDebug("iStep={iStep}, iMicroStep={iMicroStep}, pinVal=LOW", iStep, iMicroStep);
-                    if (_hardwareMode == HardwareMode.HardwareMode.Real)
+                    if (_hardwareMode == HardwareModeEnum.Real)
                         _gpioController.Write(_pins.StepPin, PinValue.Low);
                     DelayMilliSeconds(delayLow);
                 }
@@ -216,7 +216,7 @@ namespace StepperMotorController
 
         public void Dispose()
         {
-            if (_hardwareMode == HardwareMode.HardwareMode.Real)
+            if (_hardwareMode == HardwareModeEnum.Real)
             {
                 ((IDisposable)_gpioController).Dispose();
             }

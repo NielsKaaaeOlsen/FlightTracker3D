@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HardwareMode;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using StepperMotorController;
 using System;
@@ -69,7 +70,7 @@ else
 {
     try
     {
-        using (var azElController = new AzElController(loggerFactory, HardwareMode.HardwareMode.Emulated))
+        using (var azElController = new AzElController(loggerFactory, HardwareModeEnum.Emulated))
         {
             azElController.Initialize();
             double azMoveTo = 4.5;

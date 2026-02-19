@@ -20,13 +20,13 @@ namespace LCDController
 
         private Task? _task;
 
-        public TrackInfoPresenter(HardwareMode.HardwareMode mode)
+        public TrackInfoPresenter(HardwareModeEnum mode)
         {
             _cts = null;
             _task = null;
             _lcd20x4Controller = new LCD20x4Controller(mode);
 
-            if (mode == HardwareMode.HardwareMode.Real)
+            if (mode == HardwareModeEnum.Real)
                 _degreeSymbol = "\xDF"; // Degree symbol for LCD display (custom character)
             else
                 _degreeSymbol = "°"; // Regular degree symbol for console output

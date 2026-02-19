@@ -15,15 +15,15 @@ namespace LCDController
         private Lcd2004? _lcd;
         private GpioController? _gpioController;
 
-        private readonly HardwareMode.HardwareMode _hardwareMode;
+        private readonly HardwareModeEnum _hardwareMode;
 
-        public LCD20x4Controller(HardwareMode.HardwareMode mode)
+        public LCD20x4Controller(HardwareModeEnum mode)
         {
             _hardwareMode = mode;
         }
         public void Initialize()
         {
-            if (_hardwareMode == HardwareMode.HardwareMode.Real)
+            if (_hardwareMode == HardwareModeEnum.Real)
             {
                 _i2cLcd = I2cDevice.Create(new I2cConnectionSettings(1, 0x27));
                 _driver = new Pcf8574(_i2cLcd);
@@ -47,7 +47,7 @@ namespace LCDController
 
         public void WriteDisplay(string[] lines)
         {
-            if (_hardwareMode == HardwareMode.HardwareMode.Real)
+            if (_hardwareMode == HardwareModeEnum.Real)
                 _lcd.Clear();
             else
             {
@@ -60,7 +60,7 @@ namespace LCDController
 
             for (int i = 0; i < lines.Length; i++)
             {
-                if (_hardwareMode == HardwareMode.HardwareMode.Real)
+                if (_hardwareMode == HardwareModeEnum.Real)
                 {
                     _lcd.SetCursorPosition(0, i);
                     _lcd.Write(lines[i] ?? string.Empty);

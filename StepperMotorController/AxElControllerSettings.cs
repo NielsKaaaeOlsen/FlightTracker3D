@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using HardwareMode;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace StepperMotorController
     public class AxElControllerSettings
     {
         public required LogLevel MinimumLogLevel { get; set; }
-        public required HardwareMode.HardwareMode HardwareMode { get; set; }
+        public required HardwareModeEnum HardwareMode { get; set; }
         public required MicrosteppingMode MicrosteppingMode { get; set; }
 
         public required List<MoveToCommand> MoveToCommands { get; set; }

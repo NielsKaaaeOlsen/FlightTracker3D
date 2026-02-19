@@ -3,7 +3,7 @@
     /// <summary>
     /// Specifies the hardware execution mode for devices.
     /// </summary>
-    public enum HardwareMode
+    public enum HardwareModeEnum
     {
         /// <summary>
         /// Control real hardware.

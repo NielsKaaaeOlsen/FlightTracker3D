@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HardwareMode;
+using System;
 using System.Collections.Generic;
 using System.Device.Gpio;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace LEDController
         private readonly int _greenPin = 21;
 
 
-        public FlightTrackerLEDController(HardwareMode.HardwareMode mode)
+        public FlightTrackerLEDController(HardwareModeEnum mode)
         {
             _redLedController = new LEDController(_redPin, mode); 
             _yellowLedController = new LEDController(_yellowPin, mode);

@@ -9,11 +9,11 @@ namespace FlightTracker3D
 {
     public class HardwareModes
     {
-        public HardwareMode.HardwareMode LcdHardwareMode { get; private set; }
-        public HardwareMode.HardwareMode LedHardwareMode { get; private set; }
-        public HardwareMode.HardwareMode StepperMotorHardwareMode { get; private set; }
+        public HardwareModeEnum LcdHardwareMode { get; private set; }
+        public HardwareModeEnum LedHardwareMode { get; private set; }
+        public HardwareModeEnum StepperMotorHardwareMode { get; private set; }
 
-        public HardwareModes(HardwareMode.HardwareMode lcdHardwareMode, HardwareMode.HardwareMode ledHardwareMode, HardwareMode.HardwareMode stepperMotorHardwareMode)
+        public HardwareModes(HardwareModeEnum lcdHardwareMode, HardwareModeEnum ledHardwareMode, HardwareModeEnum stepperMotorHardwareMode)
         {
             LcdHardwareMode = lcdHardwareMode;
             LedHardwareMode = ledHardwareMode;
