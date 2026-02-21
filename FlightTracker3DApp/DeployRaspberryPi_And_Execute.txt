@@ -1,0 +1,108 @@
+20 febr 2026.
+
+
+Deploy and Launch the FlightTracker3DApp
+
+------------------------------------------------------------------
+
+1)
+Deploying FlightTracker3DApp on Raspberry Pi:
+
+Build the Application in RELASE mode.
+
+Select FlightTracker3DApp as startup project.
+
+IMPORTANT ! !
+In Solution Explorer select the FlightTracker3DApp project 
+
+Build --> Publish --> Folder:
+	Target folder: ..\publishCommon\
+
+	Profile settings 
+		Deployment mode: Self contained
+		Runtime: linux-arm64
+
+
+
+Build --> Publish --> Click "Publish" button
+
+
+Here you find concise steps to enable passwordless SSH from your Windows machine to the Raspberry Pi (recommended: use ed25519 keys):
+	raspberry_pi_best_practice_start_guide.txt
+
+Copy to Raspberry Pi:
+
+/*  C:\Users\niels\source\repos\FlightTracker3D\publishCommon   */
+
+
+Open a powershell
+
+Navigate to the folder where the application is built.
+C:\Users\niels\source\repos\FlightTracker3D
+
+Open a terminal and connect to the Raspberry Pi via SSH:
+ssh pi@raspberrypi
+
+Create a folder for the application:
+mkdir FlightTracker3D
+
+From windows PC:
+scp -r publishCommon\* pi@raspberrypi:~/FlightTracker3D
+
+Of unknown reason, the .json file is not copied with the above command. So copy it separately:
+scp -r .\publishCommon\FlightTracker3DAppSettings.json pi@raspberrypi:~/FlightTracker3D
+
+From Raspberry Pi:
+
+sudo raspi-config
+Enable: Interface Options --> I2C --> Yes
+
+reboot
+
+cd FlightTracker3D/
+chmod +x ./FlightTracker3DApp
+
+------------------------------------------------------------------
+
+2) 
+Setup the Application Settings: 
+cd FlightTracker3D/
+nano ./FlightTracker3DAppSettings.json
+-->
+{
+  "FlightTracker3DAppSettings": {
+    "MinimumLogLevel": "Warning",
+    "HardwareModes": {
+      "LcdHardwareMode": "Emulated",
+      "LedHardwareMode": "Emulated",
+      "StepperMotorHardwareMode": "Emulated"
+    }
+  }
+}
+
+------------------------------------------------------------------
+
+3)
+PENDING LAUNCH READRD
+cd readsb
+
+// For testing purposes, we can launch readsb with the following command. This will write the received data to a json file every 10 seconds and also make it available via the network on port 30003. The json file is needed for the FlightTracker3DApp to display the received data. In production, you would typically run readsb as a service and configure it to start automatically on boot.
+./readsb --device-type rtlsdr --gain auto --interactive  --write-json-every=10 --json-location-accuracy=0 --write-json /home/pi/readsb-json --net --net-sbs-port=30003
+
+// Use this command. JSon file is not needed for the FlightTracker3DApp to display the received data. The FlightTracker3DApp will connect to port 30003 to receive the data. In production, you would typically run readsb as a service and configure it to start automatically on boot.
+// For testing purposes, we can launch readsb with the following command. This will make the received data available via the network on port 30003. The FlightTracker3DApp will connect to this port to receive the data. In production, you would typically run readsb as a service and configure it to start automatically on boot.   
+
+./readsb --device-type rtlsdr --gain auto --interactive  --net --net-sbs-port=30003
+
+
+------------------------------------------------------------------
+
+4)
+Launching the Application:
+
+Open a terminal and connect to the Raspberry Pi via SSH:
+ssh pi@raspberrypi
+
+From Raspberry Pi:
+cd FlightTracker3D/
+./FlightTracker3DApp

@@ -2,8 +2,8 @@
   "FlightTracker3DAppSettings": {
     "MinimumLogLevel": "Warning",
     "HardwareModes": {
-      "LcdHardwareMode": "Emulated",
-      "LedHardwareMode": "Emulated",
+      "LcdHardwareMode": "Real",
+      "LedHardwareMode": "Real",
       "StepperMotorHardwareMode": "Emulated"
     }
   }

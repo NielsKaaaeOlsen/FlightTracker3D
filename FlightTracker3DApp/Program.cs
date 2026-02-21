@@ -1,24 +1,20 @@
 ﻿
 using FlightTracker3D;
 using FlightTracker3DApp;
-using HardwareMode;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using StepperMotorController;
 
 Console.WriteLine("===========================================");
 Console.WriteLine("   FlightTracker3D Application Starting   ");
 Console.WriteLine("===========================================");
 
-
-
-// Build configuration from appsettings.json in the app folder
+//-- Build configuration from FlightTracker3DAppSettings.json in the app folder
 var config = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("FlightTracker3DAppSettings.json", optional: false, reloadOnChange: true)
     .Build();
 
-// Dump configuration from AxElControllerSettings
+//-- Dump configuration from AxElControllerSettings
 var appSettings = config.GetSection("FlightTracker3DAppSettings").Get<FlightTracker3DAppSettings>();
 
 if (appSettings == null)
@@ -29,6 +25,7 @@ Console.WriteLine($"LCD HardwareMode: {appSettings.HardwareModes.LcdHardwareMode
 Console.WriteLine($"LED HardwareMode: {appSettings.HardwareModes.LedHardwareMode}");
 Console.WriteLine($"Steppper HardwareMode: {appSettings.HardwareModes.StepperMotorHardwareMode}");
 
+//-- Create logger factory
 var loggerFactory = LoggerFactory.Create(builder =>
 {
     builder
@@ -37,13 +34,11 @@ var loggerFactory = LoggerFactory.Create(builder =>
         ;
 });
 
-DateTime start = DateTime.Now;
-
 ILogger logger = loggerFactory.CreateLogger("Flight Tracker 3D App");
 logger.LogInformation("Flight Tracker 3D App started");
 
-
-using (FlightTracker3D.FlightTracking flightTracking = new FlightTracker3D.FlightTracking(appSettings.HardwareModes, loggerFactory))
+//-- Create and start flight tracking
+using (FlightTracking flightTracking = new FlightTracking(appSettings.HardwareModes, loggerFactory))
 {
     await flightTracking.StartTrackingAsync();
 }
