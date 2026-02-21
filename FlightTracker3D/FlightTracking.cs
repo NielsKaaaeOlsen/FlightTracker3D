@@ -56,6 +56,8 @@ namespace FlightTracker3D
             _ledController.Initialize();
             _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
 
+            _azElController.Initialize();
+
             string? formerIcao = null;
             while (true)
             {
@@ -71,6 +73,7 @@ namespace FlightTracker3D
                         _lcdController.ApproachingTarget(azimuth, elevation);
                         _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
                         await _azElController.MoveToAsync(azimuth, elevation);
+                        formerIcao = nearestAirCraftResult.AircraftTrack.Icao;
                     }
                     else
                     {
@@ -96,6 +99,7 @@ namespace FlightTracker3D
                             _lcdController.ApproachingTarget(azimuth, elevation);
                             _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
                             await _azElController.MoveToAsync(azimuth, elevation);
+                            formerIcao = nearestAirCraftResult.AircraftTrack.Icao;
                         }
                     }
                 }

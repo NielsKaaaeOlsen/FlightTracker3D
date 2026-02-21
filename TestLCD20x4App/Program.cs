@@ -3,7 +3,7 @@ using LCDController;
 
 Console.WriteLine("Testing FlightTracker LCD 20x4C ontroller ");
 
-HardwareModeEnum mode = HardwareModeEnum.Real; // Change to Real for actual hardware
+HardwareModeEnum mode = HardwareModeEnum.Emulated; // Change to Real for actual hardware
 
 using (TrackInfoPresenter lcdPresenter = new TrackInfoPresenter(mode))
 {
