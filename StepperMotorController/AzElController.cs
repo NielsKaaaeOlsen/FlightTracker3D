@@ -50,6 +50,14 @@ namespace StepperMotorController
             _aziumuthController.SetMicrostepping(mode);
             _elevationController.SetMicrostepping(mode);
         }
+
+        /// <summary>
+        /// Don't use this method. Use MoveToAsync instead for non-blocking movement.
+        /// </summary>
+        /// <param name="azimuthDegrees"></param>
+        /// <param name="elevationDegrees"></param>
+        /// <param name="durationSeconds"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void MoveToAzEl(double azimuthDegrees, double elevationDegrees, double durationSeconds = 0)
         {
             //Validate angles
@@ -89,6 +97,8 @@ namespace StepperMotorController
 
         public async Task MoveToAsync(double azimuthDegrees, double elevationDegrees, double durationSeconds = 0)
         {
+            _logger.LogInformation("Move To Async az={azimuthDegrees}  el={elevationDegrees} durationSec= {durationSeconds}", azimuthDegrees, elevationDegrees, durationSeconds);
+
             //Validate angles
             if (azimuthDegrees < 0 || azimuthDegrees >= 360) 
                 throw new ArgumentOutOfRangeException(nameof(azimuthDegrees), "Azimuth degrees must be between 0 and 360.");

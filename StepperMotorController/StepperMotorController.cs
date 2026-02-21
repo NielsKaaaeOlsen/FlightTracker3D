@@ -147,7 +147,7 @@ namespace StepperMotorController
 
             DateTime startTime = DateTime.Now;
 
-            _logger.LogInformation($"Step: forward={forward}, steps={steps}, timePerStepSec={timePerStepSec}");
+            _logger.LogInformation("Step: forward={forward}, steps={steps}, timePerStepSec={timePerStepSec}", forward, steps, timePerStepSec);
 
             int timePerStepMilliSec = (int)(timePerStepSec * 1000);
             int dtmsPerMicroStep = timePerStepMilliSec / _microStepsPerStep;
@@ -165,16 +165,16 @@ namespace StepperMotorController
             //-- Set microsteppings pin values
             for (int iStep = 0; iStep < steps; iStep++)
             {
-                _logger.LogInformation("iStep={iStep}", iStep);
+                _logger.LogDebug("iStep={iStep}", iStep);
                 for (int iMicroStep = 0; iMicroStep < _microStepsPerStep; iMicroStep++)
                 {
-                    _logger.LogDebug("iStep={iStep}, iMicroStep={iMicroStep}, pinVal=HIGH", iStep, iMicroStep);
+                    _logger.LogTrace("iStep={iStep}, iMicroStep={iMicroStep}, pinVal=HIGH", iStep, iMicroStep);
                     // Set the step pin high
                     if (_hardwareMode == HardwareModeEnum.Real)
                         _gpioController.Write(_pins.StepPin, PinValue.High);
                     DelayMilliSeconds(delayHigh);
                     // Set the step pin low
-                    _logger.LogDebug("iStep={iStep}, iMicroStep={iMicroStep}, pinVal=LOW", iStep, iMicroStep);
+                    _logger.LogTrace("iStep={iStep}, iMicroStep={iMicroStep}, pinVal=LOW", iStep, iMicroStep);
                     if (_hardwareMode == HardwareModeEnum.Real)
                         _gpioController.Write(_pins.StepPin, PinValue.Low);
                     DelayMilliSeconds(delayLow);

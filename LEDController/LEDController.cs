@@ -78,21 +78,21 @@ namespace LEDController
         public void SetState(LEDState state)
         {
             _currentState = state;
-            Console.WriteLine($"LED state set to: {_currentState}");
+            //Console.WriteLine($"LED state set to: {_currentState}");
 
             switch (_currentState)
             {
                 case LEDState.Off:
                     if (_hardwareMode == HardwareModeEnum.Real)
                         _gpioController.Write(_ledPin, PinValue.Low);
-                    else
+                    else if (_hardwareMode == HardwareModeEnum.Emulated)
                         Console.WriteLine("LED is off (emulated mode).");
                     break;
 
                 case LEDState.On:
                     if (_hardwareMode == HardwareModeEnum.Real)
                         _gpioController.Write(_ledPin, PinValue.High);
-                    else
+                    else if (_hardwareMode == HardwareModeEnum.Emulated)
                         Console.WriteLine("LED is on (emulated mode).");
                     break;
 
@@ -102,10 +102,10 @@ namespace LEDController
                     {
                         while (_currentState == LEDState.Blinking)
                         {
-                            Console.WriteLine($"LED is blinking... {_isBlinkingOn}");
+                            //Console.WriteLine($"LED is blinking... {_isBlinkingOn}");
                             if (_hardwareMode == HardwareModeEnum.Real)
                                 _gpioController.Write(_ledPin, _isBlinkingOn ? PinValue.High : PinValue.Low);
-                            else
+                            else if (_hardwareMode == HardwareModeEnum.Emulated)
                                 Console.WriteLine($"LED is {(_isBlinkingOn ? "On" : "off")} (emulated mode).");
 
                             Thread.Sleep(1000);

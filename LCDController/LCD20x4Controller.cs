@@ -41,17 +41,19 @@ namespace LCDController
 
                 _lcd.Clear();
             }
-            else
+            else if (_hardwareMode == HardwareModeEnum.Emulated)
                 Console.WriteLine("LCD20x4Controller : Initialize");
         }
 
         public void WriteDisplay(string[] lines)
         {
+            if (_hardwareMode == HardwareModeEnum.Real && _lcd == null)
+                throw new InvalidOperationException("LCD not initialized. Call Initialize() first.");
+
             if (_hardwareMode == HardwareModeEnum.Real)
                 _lcd.Clear();
-            else
+            else if (_hardwareMode == HardwareModeEnum.Emulated)
             {
-                //Console.WriteLine("WriteDisplay");
                 Console.WriteLine("----X----X----X----X");
             }
 
@@ -65,18 +67,9 @@ namespace LCDController
                     _lcd.SetCursorPosition(0, i);
                     _lcd.Write(lines[i] ?? string.Empty);
                 }
-                else
+                else if (_hardwareMode == HardwareModeEnum.Emulated)
                     Console.WriteLine(lines[i] ?? string.Empty);
             }
-        }
-
-        public void WriteLine(int row, int col, string text)
-        {
-            if (_lcd == null)
-                throw new InvalidOperationException("LCD not initialized. Call Initialize() first.");
-
-            _lcd.SetCursorPosition(col, row);
-            _lcd.Write(text);
         }
 
         public void Clear()

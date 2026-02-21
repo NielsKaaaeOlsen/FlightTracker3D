@@ -37,8 +37,15 @@ var loggerFactory = LoggerFactory.Create(builder =>
 ILogger logger = loggerFactory.CreateLogger("Flight Tracker 3D App");
 logger.LogInformation("Flight Tracker 3D App started");
 
-//-- Create and start flight tracking
-using (FlightTracking flightTracking = new FlightTracking(appSettings.HardwareModes, loggerFactory))
+try
 {
-    await flightTracking.StartTrackingAsync();
+    //-- Create and start flight tracking
+    using (FlightTracking flightTracking = new FlightTracking(appSettings.HardwareModes, loggerFactory))
+    {
+        await flightTracking.StartTrackingAsync();
+    }
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "An error occurred in the Flight Tracker 3D App.");
 }

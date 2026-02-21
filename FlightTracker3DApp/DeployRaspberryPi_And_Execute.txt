@@ -106,3 +106,14 @@ ssh pi@raspberrypi
 From Raspberry Pi:
 cd FlightTracker3D/
 ./FlightTracker3DApp
+
+------------------------------------------------------------------
+
+5)
+Check the source code status in GITHUB
+https://github.com/NielsKaaaeOlsen/FlightTracker3D
+
+
+6)
+// If you want to deploy the application again, you can use the following command to build and publish the application in one step. This will create a self-contained application for linux-arm64 and output it to the publishCommon folder. You can then copy the contents of this folder to the Raspberry Pi as described in step 1.
+dotnet publish FlightTracker3DApp/FlightTracker3DApp.csproj -c Release -r linux-arm64 --self-contained true -o publishCommon

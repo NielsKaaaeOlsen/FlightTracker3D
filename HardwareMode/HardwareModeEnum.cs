@@ -13,6 +13,11 @@
         /// <summary>
         /// Emulated mode for testing without hardware (outputs to console).
         /// </summary>
-        Emulated
+        Emulated,
+
+        /// <summary>
+        /// Emulated mode for testing without hardware, but with less verbose output than Emulated mode.
+        EmulatedSilent
+        /// </summary>
     }
 }

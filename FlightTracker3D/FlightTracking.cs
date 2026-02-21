@@ -70,7 +70,7 @@ namespace FlightTracker3D
                         double elevation = nearestAirCraftResult.AircraftAzElPosition.Elevation;
                         _lcdController.ApproachingTarget(azimuth, elevation);
                         _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
-                        _azElController.MoveToAzEl(azimuth, elevation);
+                        await _azElController.MoveToAsync(azimuth, elevation);
                     }
                     else
                     {
@@ -86,7 +86,7 @@ namespace FlightTracker3D
                             double altitudeMeter = nearestAirCraftResult.AircraftTrack.History.Last<PositionPoint>().AltitudeMeters;
                             _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
                             _ledController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
-                            _azElController.MoveToAzEl(azimuth, elevation, durationSec);
+                            await _azElController.MoveToAsync(azimuth, elevation, durationSec);
                         }
                         else
                         {
@@ -95,7 +95,7 @@ namespace FlightTracker3D
                             double elevation = nearestAirCraftResult.AircraftAzElPosition.Elevation;
                             _lcdController.ApproachingTarget(azimuth, elevation);
                             _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
-                            _azElController.MoveToAzEl(azimuth, elevation);
+                            await _azElController.MoveToAsync(azimuth, elevation);
                         }
                     }
                 }
@@ -104,7 +104,7 @@ namespace FlightTracker3D
                     //-- no aircraft found
                     _lcdController.NoTracks();
                     _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
-                    _azElController.MoveToAzEl(0, 0);
+                    await _azElController.MoveToAsync(0, 0);
                 }
 
                 DateTime loopEnd = DateTime.Now;
