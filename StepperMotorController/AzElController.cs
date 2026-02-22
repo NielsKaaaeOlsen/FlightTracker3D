@@ -78,6 +78,8 @@ namespace StepperMotorController
             bool elForward = elStepsToMove >= 0;
             if (elStepsToMove < 0) elStepsToMove *= -1;
             double elTimePerStepSec = durationSeconds / elStepsToMove;
+            Console.WriteLine($"  Move To Async az={azimuthDegrees}  el={elevationDegrees} dtSec= {durationSeconds} {azForward} {azStepsToMove}  {elForward} {elStepsToMove}");
+
 
             // compute az/el step counts as before, then:
             var azTask = _aziumuthController.StepAsync(azForward, azStepsToMove, azTimePerStepSec);

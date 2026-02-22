@@ -20,4 +20,26 @@ Console.WriteLine($"Azimuth: {azimuth:F2}° (from north), Elevation: {elevation:
 
 // Or combined:
 var (az, el, di) = GeoDistance.CalculateAzimuthAndElevation(lat1, lon1, alt1, lat2, lon2, alt2);
-Console.WriteLine($"Combined → Azimuth: {az:F2}°, Elevation: {el:F2}°  Distance: {di} meter");
+Console.WriteLine($"Combined → Azimuth: {az:F2}°, Elevation: {el:F2}°  Distance: {di} meter  compass {Compass.GetCompassDirection(az)} ");
+
+
+
+public class Compass
+{
+    /// <summary>
+    /// Convert azimuth to compass direction text (8 directions)
+    /// </summary>
+    /// <param name="azimuth">Azimuth in degrees (0-360)</param>
+    /// <returns>Compass direction (N, NE, E, SE, S, SW, W, NW)</returns>
+    public static string GetCompassDirection(double azimuth)
+    {
+        // Normalize to 0-360 range
+        azimuth = (azimuth % 360 + 360) % 360;
+
+        // 8 main directions (45° sectors)
+        string[] directions = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+        int index = (int)Math.Round(azimuth / 45.0) % 8;
+
+        return directions[index];
+    }
+}

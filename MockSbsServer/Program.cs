@@ -79,7 +79,7 @@ public class MockSbsServer
             Latitude = baseLat + 0.2,
             Longitude = baseLon - 0.1,
             Altitude = 25000,  // Feet
-            GroundSpeed = 480,
+            GroundSpeed = 480 * 10,   //TODO: FAST AIRCRAFT :-)
             Track = 180,
             VerticalRate = 0
         });
