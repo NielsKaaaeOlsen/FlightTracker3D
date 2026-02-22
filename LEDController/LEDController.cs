@@ -77,6 +77,10 @@ namespace LEDController
         /// </remarks>
         public void SetState(LEDState state)
         {
+            if (state == _currentState) 
+            {
+                return;
+            }
             _currentState = state;
             //Console.WriteLine($"LED state set to: {_currentState}");
 

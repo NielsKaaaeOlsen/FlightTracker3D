@@ -55,7 +55,7 @@ namespace StepperMotorController
         {
             _logger.LogInformation("Move To Async az={azimuthDegrees}  el={elevationDegrees} durationSec= {durationSeconds}", azimuthDegrees, elevationDegrees, durationSeconds);
 
-            //Validate angles
+            //-- Validate angles
             if (azimuthDegrees < 0 || azimuthDegrees >= 360) 
                 throw new ArgumentOutOfRangeException(nameof(azimuthDegrees), "Azimuth degrees must be between 0 and 360.");
             if (elevationDegrees < 0 || elevationDegrees > 90) 
@@ -81,7 +81,9 @@ namespace StepperMotorController
             Console.WriteLine($"  Move To Async az={azimuthDegrees}  el={elevationDegrees} dtSec= {durationSeconds} {azForward} {azStepsToMove}  {elForward} {elStepsToMove}");
 
 
-            // compute az/el step counts as before, then:
+            //-- Due to reverse wiring of the azimuth motor, we need to invert the direction for azimuth
+            azForward = !azForward;
+
             var azTask = _aziumuthController.StepAsync(azForward, azStepsToMove, azTimePerStepSec);
             var elTask = _elevationController.StepAsync(elForward, elStepsToMove, elTimePerStepSec);
 
