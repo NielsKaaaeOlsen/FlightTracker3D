@@ -78,19 +78,19 @@ else
             double durationSeconds = 4.0;
 
             logger.LogInformation("1: Starting move: az={azMoveTo}, el={elMoveTo}, duration={t} sec", azMoveTo, elMoveTo, durationSeconds);
-            azElController.MoveToAzEl(azMoveTo, elMoveTo, durationSeconds);
+            await azElController.MoveToAsync(azMoveTo, elMoveTo, durationSeconds);
             logger.LogInformation("1: Move command issued.");
 
             azMoveTo -= 1.8;
             elMoveTo -= 1.8;
 
             logger.LogInformation("2: Starting move: az={az}, el={el}, duration={t} sec", azMoveTo, elMoveTo, durationSeconds);
-            azElController.MoveToAzEl(azMoveTo, elMoveTo, durationSeconds);
+            await azElController.MoveToAsync(azMoveTo, elMoveTo, durationSeconds);
             logger.LogInformation("2: Move command issued.");
 
             //Keep target position --> no movemment
             logger.LogInformation("3: Starting move: az={az}, el={el}, duration={t} sec", azMoveTo, elMoveTo, durationSeconds);
-            azElController.MoveToAzEl(azMoveTo, elMoveTo, durationSeconds);
+            await azElController.MoveToAsync(azMoveTo, elMoveTo, durationSeconds);
             logger.LogInformation("3: Move command issued.");
 
 
@@ -102,7 +102,7 @@ else
 
             //Move back to initial position with mazimum speed
             logger.LogInformation("Move back to initial position with mazimum speed");
-            azElController.MoveToAzEl(0, 0);
+            await azElController.MoveToAsync(0, 0);
             (double azPosInitial, double ElPosInitial) = azElController.GetCurrentZElPosition();
             logger.LogInformation("Final position as initial position: azPos={azPos}, elPos={elPos}", azPosInitial, ElPosInitial);
 

@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using HardwareMode;
@@ -78,11 +79,14 @@ namespace LCDController
         public void AircraftTracking(double az, double el, double altMeter, double dist, string callsign, string icao)
         {
             _CancelTrackingTask();
-            _task = Task.Run(() => AircraftTrackingAsync(az: az, el: el, altMeter: altMeter, dist: dist, callsign: callsign, icao: icao));
-
+            
+            // Opret CTS INDEN task startes
+            _cts = new CancellationTokenSource();
+            
+            _task = Task.Run(() => AircraftTrackingAsync(az, el, altMeter, dist, callsign, icao, _cts.Token));
         }
 
-        public async Task AircraftTrackingAsync(double az, double el, double altMeter, double dist, string callsign, string icao)
+        public async Task AircraftTrackingAsync(double az, double el, double altMeter, double dist, string callsign, string icao, CancellationToken token)
         {
             string compassDir = GetCompassDirection(az);
 
@@ -98,11 +102,8 @@ namespace LCDController
             string flightInfoLine3 = string.Empty;
             string[] flightInfoLines = new string[] { flightInfoLine0, flightInfoLine1, flightInfoLine2, flightInfoLine3 };
 
-            // Create CancellationTokenSource
-            _cts = new CancellationTokenSource();
-
             bool showPosInfo = true;
-            while (true)
+            while (!token.IsCancellationRequested)  // Check token
             {
                 try
                 {
@@ -110,14 +111,14 @@ namespace LCDController
                         _lcd20x4Controller.WriteDisplay(posInfoLines);
                     else
                         _lcd20x4Controller.WriteDisplay(flightInfoLines);
-                    Task.Delay(showPosInfo ? 2000 : 1000, _cts.Token).GetAwaiter().GetResult();
+                    
+                    await Task.Delay(showPosInfo ? 2000 : 1000, token);  // Use await
+                    showPosInfo = !showPosInfo;
                 }
                 catch (OperationCanceledException)
                 {
-                    //Console.WriteLine("Delay cancelled!");
                     break;
                 }
-                showPosInfo = !showPosInfo; // Toggle between position info and flight info
             }
             _cts = null;
         }

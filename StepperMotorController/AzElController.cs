@@ -51,50 +51,6 @@ namespace StepperMotorController
             _elevationController.SetMicrostepping(mode);
         }
 
-        /// <summary>
-        /// Don't use this method. Use MoveToAsync instead for non-blocking movement.
-        /// </summary>
-        /// <param name="azimuthDegrees"></param>
-        /// <param name="elevationDegrees"></param>
-        /// <param name="durationSeconds"></param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public void MoveToAzEl(double azimuthDegrees, double elevationDegrees, double durationSeconds = 0)
-        {
-            //Validate angles
-            if (azimuthDegrees < 0 || azimuthDegrees >= 360) 
-                throw new ArgumentOutOfRangeException(nameof(azimuthDegrees), "Azimuth degrees must be between 0 and 360.");
-            if (elevationDegrees < 0 || elevationDegrees > 90) 
-                throw new ArgumentOutOfRangeException(nameof(elevationDegrees), "Elevation degrees must be between 0 and 90."); 
-
-            //-- Azimuth movement
-            var azDegPerStep =_aziumuthController.GetDegreesPerStep();
-            int targetAzStep = (int)(azimuthDegrees / azDegPerStep);
-
-            int azStepsToMove = targetAzStep - _currentAzStep;
-            bool azForward = azStepsToMove >= 0;
-            if (azStepsToMove < 0) azStepsToMove *= -1;
-            if (azStepsToMove != 0)
-            {
-                double azTimePerStepSec = durationSeconds / azStepsToMove;
-                _aziumuthController.Step(azForward, azStepsToMove, azTimePerStepSec);
-                _currentAzStep = targetAzStep;
-            }
-
-            //-- Elevation movement
-            var elDegPerStep = _elevationController.GetDegreesPerStep();
-            int targetElStep = (int)(elevationDegrees / elDegPerStep);
-
-            int elStepsToMove = targetElStep - _currentElStep;
-            bool elForward = elStepsToMove >= 0;
-            if (elStepsToMove < 0) elStepsToMove *= -1;
-            if (elStepsToMove != 0)
-            {
-                double elTimePerStepSec = durationSeconds / elStepsToMove;
-                _elevationController.Step(elForward, elStepsToMove, elTimePerStepSec);
-                _currentElStep = targetElStep;
-            }
-        }
-
         public async Task MoveToAsync(double azimuthDegrees, double elevationDegrees, double durationSeconds = 0)
         {
             _logger.LogInformation("Move To Async az={azimuthDegrees}  el={elevationDegrees} durationSec= {durationSeconds}", azimuthDegrees, elevationDegrees, durationSeconds);

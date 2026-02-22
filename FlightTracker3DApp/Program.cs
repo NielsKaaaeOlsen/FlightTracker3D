@@ -24,6 +24,7 @@ Console.WriteLine($"MinimumLogLevel: {appSettings.MinimumLogLevel}");
 Console.WriteLine($"LCD HardwareMode: {appSettings.HardwareModes.LcdHardwareMode}");
 Console.WriteLine($"LED HardwareMode: {appSettings.HardwareModes.LedHardwareMode}");
 Console.WriteLine($"Steppper HardwareMode: {appSettings.HardwareModes.StepperMotorHardwareMode}");
+Console.WriteLine($"AirCraftListener HardwareMode: {appSettings.HardwareModes.AirCraftListenerMode}");
 
 //-- Create logger factory
 var loggerFactory = LoggerFactory.Create(builder =>

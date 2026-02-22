@@ -17,9 +17,10 @@ namespace FlightTracker3D
 
         public FlightTracking(HardwareModes hardwareModes, ILoggerFactory? loggerFactory)
         {
-
-            //string host = "localhost";
-            string host = "192.168.1.92";
+            //-- Determine host based on hardware mode for AirCraftListener. 
+            //   If in Real mode, use the IP address of the Raspberry PI running the ReadSr service. 
+            //   If in Simulation mode, use localhost and execute the MockSbsServer. 
+            string host = hardwareModes.AirCraftListenerMode == HardwareModeEnum.Real ? "192.168.1.92" : "localhost";
             int port = 30003;
 
             PositionPoint referencePoint = new PositionPoint
@@ -65,9 +66,10 @@ namespace FlightTracker3D
                 var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraft();
                 if (nearestAirCraftResult != null)
                 {
-                    //-- fisrst aircraft found
                     if (formerIcao == null)
                     {
+                        //-- fisrst aircraft found
+                        Console.WriteLine($"First aircraft found: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
                         double azimuth = nearestAirCraftResult.AircraftAzElPosition.Azimuth;
                         double elevation = nearestAirCraftResult.AircraftAzElPosition.Elevation;
                         _lcdController.ApproachingTarget(azimuth, elevation);
@@ -80,7 +82,8 @@ namespace FlightTracker3D
                         if (formerIcao == nearestAirCraftResult.AircraftTrack.Icao)
                         {
                             //-- same aircraft, update position only
-                            double durationSec = 1;
+                            Console.WriteLine($"Tracking same aircraft: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
+                            double durationSec = 3; //TODO: make this configurable
                             string callsign = nearestAirCraftResult.AircraftTrack.Callsign;
                             string icao = nearestAirCraftResult.AircraftTrack.Icao;
                             double azimuth = nearestAirCraftResult.AircraftAzElPosition.Azimuth;
@@ -94,6 +97,7 @@ namespace FlightTracker3D
                         else
                         {
                             //-- new aircraft detected
+                            Console.WriteLine($"New aircraft detected: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
                             double azimuth = nearestAirCraftResult.AircraftAzElPosition.Azimuth;
                             double elevation = nearestAirCraftResult.AircraftAzElPosition.Elevation;
                             _lcdController.ApproachingTarget(azimuth, elevation);
@@ -106,6 +110,7 @@ namespace FlightTracker3D
                 else
                 {
                     //-- no aircraft found
+                    Console.WriteLine("No aircraft found.");
                     _lcdController.NoTracks();
                     _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
                     await _azElController.MoveToAsync(0, 0);
@@ -113,9 +118,9 @@ namespace FlightTracker3D
 
                 DateTime loopEnd = DateTime.Now;
                 TimeSpan loopDuration = loopEnd - loopStart;
-                if (loopDuration.TotalMilliseconds < 1000)
+                if (loopDuration.TotalMilliseconds < 3000) //TODO: make this configurable
                 {
-                    double delayMilliSec = (1000 - loopDuration.TotalMilliseconds);
+                    double delayMilliSec = (3000 - loopDuration.TotalMilliseconds);
                     await Task.Delay((int)delayMilliSec); 
                 }
             }

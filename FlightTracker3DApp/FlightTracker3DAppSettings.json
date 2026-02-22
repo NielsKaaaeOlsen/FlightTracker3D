@@ -4,7 +4,8 @@
     "HardwareModes": {
       "LcdHardwareMode": "EmulatedSilent",
       "LedHardwareMode": "EmulatedSilent",
-      "StepperMotorHardwareMode": "Emulated"
+      "StepperMotorHardwareMode": "Emulated",
+      "AirCraftListenerMode": "Emulated"
     }
   }
 }
