@@ -40,11 +40,40 @@ logger.LogInformation("Flight Tracker 3D App started");
 
 try
 {
+    //-- Create cancellation token source for graceful shutdown
+    using var cts = new CancellationTokenSource();
+
+    //-- Start keyboard monitoring task
+    var keyboardTask = Task.Run(() =>
+    {
+        Console.WriteLine("Press Ctrl-X to shutdown gracefully...");
+        while (!cts.Token.IsCancellationRequested)
+        {
+            if (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(intercept: true);
+                if (key.Key == ConsoleKey.X && key.Modifiers.HasFlag(ConsoleModifiers.Control))
+                {
+                    Console.WriteLine("\n[Ctrl-X detected] Initiating graceful shutdown...");
+                    cts.Cancel();
+                    break;
+                }
+            }
+            Thread.Sleep(100);
+        }
+    });
+
     //-- Create and start flight tracking
     using (FlightTracking flightTracking = new FlightTracking(appSettings.HardwareModes, loggerFactory))
     {
-        await flightTracking.StartTrackingAsync();
+        await flightTracking.StartTrackingAsync(cts.Token);
     }
+
+    await keyboardTask;
+}
+catch (OperationCanceledException)
+{
+    logger.LogInformation("Flight Tracker 3D App shut down gracefully.");
 }
 catch (Exception ex)
 {

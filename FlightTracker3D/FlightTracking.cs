@@ -45,7 +45,19 @@ namespace FlightTracker3D
             _azElController.Dispose();
         }
 
-        public async Task StartTrackingAsync()
+        /// <summary>
+        /// Performs graceful shutdown by moving stepper motors to home position (0, 0).
+        /// </summary>
+        private async Task ShutdownAsync()
+        {
+            Console.WriteLine("Shutting down: Moving stepper motors to home position (0, 0)...");
+            _lcdController.Blank();
+            _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
+            await _azElController.MoveToAsync(0, 0);
+            Console.WriteLine("Stepper motors at home position. Shutdown complete.");
+        }
+
+        public async Task StartTrackingAsync(CancellationToken cancellationToken = default)
         {
             Console.WriteLine("Starting flight tracking...");
 
@@ -60,7 +72,7 @@ namespace FlightTracker3D
             _azElController.Initialize();
 
             string? formerIcao = null;
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 DateTime loopStart = DateTime.Now;
                 var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraft();
@@ -121,9 +133,19 @@ namespace FlightTracker3D
                 if (loopDuration.TotalMilliseconds < 3000) //TODO: make this configurable
                 {
                     double delayMilliSec = (3000 - loopDuration.TotalMilliseconds);
-                    await Task.Delay((int)delayMilliSec); 
+                    try
+                    {
+                        await Task.Delay((int)delayMilliSec, cancellationToken);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
                 }
             }
+
+            //-- Graceful shutdown
+            await ShutdownAsync();
         }
     }
 }

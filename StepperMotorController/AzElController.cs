@@ -81,8 +81,9 @@ namespace StepperMotorController
             Console.WriteLine($"  Move To Async az={azimuthDegrees}  el={elevationDegrees} dtSec= {durationSeconds} {azForward} {azStepsToMove}  {elForward} {elStepsToMove}");
 
 
-            //-- Due to reverse wiring of the azimuth motor, we need to invert the direction for azimuth
+            //-- Due to reverse wiring of the azimuth and elevation motors, we need to invert the directions
             azForward = !azForward;
+            elForward = !elForward;
 
             var azTask = _aziumuthController.StepAsync(azForward, azStepsToMove, azTimePerStepSec);
             var elTask = _elevationController.StepAsync(elForward, elStepsToMove, elTimePerStepSec);
