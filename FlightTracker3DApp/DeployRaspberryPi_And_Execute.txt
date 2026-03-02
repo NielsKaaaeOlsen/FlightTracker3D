@@ -83,22 +83,86 @@ nano ./FlightTracker3DAppSettings.json
 ------------------------------------------------------------------
 
 3)
-PENDING LAUNCH READRD
-cd readsb
+Setup Readsb (ADS-B Decoder):
 
-// For testing purposes, we can launch readsb with the following command. This will write the received data to a json file every 10 seconds and also make it available via the network on port 30003. The json file is needed for the FlightTracker3DApp to display the received data. In production, you would typically run readsb as a service and configure it to start automatically on boot.
-./readsb --device-type rtlsdr --gain auto --interactive  --write-json-every=10 --json-location-accuracy=0 --write-json /home/pi/readsb-json --net --net-sbs-port=30003
+Readsb should already be installed and located in /home/pi/readsb/
+If not installed, follow the readsb installation instructions.
 
-// Use this command. JSon file is not needed for the FlightTracker3DApp to display the received data. The FlightTracker3DApp will connect to port 30003 to receive the data. In production, you would typically run readsb as a service and configure it to start automatically on boot.
-// For testing purposes, we can launch readsb with the following command. This will make the received data available via the network on port 30003. The FlightTracker3DApp will connect to this port to receive the data. In production, you would typically run readsb as a service and configure it to start automatically on boot.   
+Verify readsb is working manually (optional):
+cd ~/readsb
+./readsb --device-type rtlsdr --gain auto --interactive --net --net-sbs-port=30003
 
-./readsb --device-type rtlsdr --gain auto --interactive  --net --net-sbs-port=30003
-
+Press Ctrl-C to stop the manual test.
 
 ------------------------------------------------------------------
 
 4)
-Launching the Application:
+Setup SystemD Services for Auto-Start at Boot:
+
+The system will automatically:
+1. Start Readsb service first
+2. Wait 4 seconds for Readsb to initialize
+3. Start FlightTracker3D service
+
+Copy service files to Raspberry Pi:
+From Windows PC:
+scp flighttracker3d.service pi@raspberrypi:~/FlightTracker3D/
+scp readsb.service pi@raspberrypi:~/FlightTracker3D/
+scp setup_service.sh pi@raspberrypi:~/FlightTracker3D/
+
+From Raspberry Pi:
+cd FlightTracker3D/
+chmod +x setup_service.sh
+./setup_service.sh
+
+The setup script will:
+- Add user 'pi' to gpio, i2c, and spi groups
+- Install Readsb systemd service
+- Install FlightTracker3D systemd service (with dependency on Readsb)
+- Enable auto-start at boot for both services
+- Start both services (Readsb first, then FlightTracker3D after 4 seconds)
+
+Useful service commands:
+
+Readsb:
+sudo systemctl status readsb.service               # Check status
+sudo journalctl -u readsb.service -f               # View logs in real-time
+sudo systemctl stop readsb.service                 # Stop service
+sudo systemctl start readsb.service                # Start service
+sudo systemctl restart readsb.service              # Restart service
+
+FlightTracker3D:
+sudo systemctl status flighttracker3d.service      # Check status
+sudo journalctl -u flighttracker3d.service -f      # View logs in real-time
+sudo systemctl stop flighttracker3d.service        # Stop service
+sudo systemctl start flighttracker3d.service       # Start service
+sudo systemctl restart flighttracker3d.service     # Restart service
+
+Both services:
+sudo systemctl stop flighttracker3d.service readsb.service     # Stop both
+sudo systemctl start readsb.service                            # Start both (FT3D auto-starts)
+sudo systemctl disable flighttracker3d.service readsb.service  # Disable auto-start
+
+Note: After running setup_service.sh, reboot for group changes to take effect:
+sudo reboot
+
+After reboot, both services will start automatically with correct timing.
+
+------------------------------------------------------------------
+
+5)
+Launching the Application Manually (without service):
+
+Open a terminal and connect to the Raspberry Pi via SSH:
+ssh pi@raspberrypi
+
+From Raspberry Pi:
+cd FlightTracker3D/
+./FlightTracker3DApp
+
+Press Ctrl-X to shutdown gracefully (stepper motors will return to home position).
+
+------------------------------------------------------------------Launching the Application:
 
 Open a terminal and connect to the Raspberry Pi via SSH:
 ssh pi@raspberrypi

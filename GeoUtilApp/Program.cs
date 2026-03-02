@@ -22,7 +22,12 @@ Console.WriteLine($"Azimuth: {azimuth:F2}° (from north), Elevation: {elevation:
 var (az, el, di) = GeoDistance.CalculateAzimuthAndElevation(lat1, lon1, alt1, lat2, lon2, alt2);
 Console.WriteLine($"Combined → Azimuth: {az:F2}°, Elevation: {el:F2}°  Distance: {di} meter  compass {Compass.GetCompassDirection(az)} ");
 
+var ecef = GeoDistance.GeodeticToEcef(55.86, 12.46, 50);
+Console.WriteLine($"ECEF: X={ecef.X}, Y={ecef.Y}, Z={ecef.Z}");
 
+// Tilbage
+var geodetic = GeoDistance.EcefToGeodetic(ecef.X, ecef.Y, ecef.Z);
+Console.WriteLine($"Geodetic: Lat={geodetic.LatDeg}, Lon={geodetic.LonDeg}, Alt={geodetic.AltMeters}");
 
 public class Compass
 {

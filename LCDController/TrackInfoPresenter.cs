@@ -112,7 +112,7 @@ namespace LCDController
                     else
                         _lcd20x4Controller.WriteDisplay(flightInfoLines);
                     
-                    await Task.Delay(showPosInfo ? 2000 : 1000, token);  // Use await
+                    await Task.Delay(showPosInfo ? 2000 : 1500, token);  // Use await
                     showPosInfo = !showPosInfo;
                 }
                 catch (OperationCanceledException)
@@ -134,9 +134,9 @@ namespace LCDController
                 while (!_task.IsCompleted)
                 {
                     //Console.WriteLine("Waiting for Task to complete...");
-                    Thread.Sleep(10); // Small delay to ensure the previous tracking task has been cancelled before starting a new one
+                    Thread.Sleep(50); // Small delay to ensure the previous tracking task has been cancelled before starting a new one
                     counter++;
-                    if (counter > 100) // Timeout after 1 second
+                    if (counter > 200) // Timeout after 10 second
                     {
                         throw new TimeoutException("Task cancellation timeout. The tracking task did not complete within the expected time frame.");
                     }

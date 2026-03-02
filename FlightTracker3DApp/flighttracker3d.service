@@ -1,0 +1,34 @@
+[Unit]
+Description=FlightTracker3D Aircraft Tracking System
+After=network.target readsb.service
+Requires=readsb.service
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/FlightTracker3D
+
+# Wait 4 seconds after readsb starts before starting FlightTracker3D
+ExecStartPre=/bin/sleep 4
+ExecStart=/home/pi/FlightTracker3D/FlightTracker3DApp
+
+# Auto-restart configuration
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=flighttracker3d
+
+# Environment variables
+Environment="DOTNET_CLI_HOME=/tmp"
+Environment="DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1"
+
+# Security and permissions
+# User pi must be member of: gpio, i2c, spi groups
+SupplementaryGroups=gpio i2c spi
+
+[Install]
+WantedBy=multi-user.target

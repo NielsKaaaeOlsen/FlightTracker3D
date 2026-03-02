@@ -39,15 +39,18 @@ C:\Users\niels\source\repos\FlightTracker3D
 ssh pi@raspberrypi
 
 Create a folder for the application:
-mkdir FlightTracker3D
+//mkdir FlightTracker3D
+mkdir TestStepperMotoprApp
 
 From windows PC:
-scp -r publishCommon\* pi@raspberrypi:~/FlightTracker3D
+///scp -r publishCommon\* pi@raspberrypi:~/FlightTracker3D
+
+scp -r publishTestStepperMotoprApp\* pi@raspberrypi:~/TestStepperMotoprApp
 
 
 From Raspberry Pi:
 
-cd FlightTracker3D/
+cd TestStepperMotoprApp/
 chmod +x ./TestStepperMotorApp
 
 

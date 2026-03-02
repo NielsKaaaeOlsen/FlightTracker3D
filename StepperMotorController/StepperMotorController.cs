@@ -157,10 +157,15 @@ namespace StepperMotorController
             if (dtmsPerMicroStep - delayHigh - delayLow > 0) 
                 delayLow++;
 
+            //-- set minimum period for one microstep in milliseconds 
+            if (delayHigh < 2) delayHigh = 2;
+            if (delayLow < 2) delayLow = 2;
+
             //-- Set direction pin values  -->  Retning: High = CW, Low = CCW (afhænger af kabler) 
             PinValue dirValue = forward ? PinValue.High : PinValue.Low;
             if (_hardwareMode == HardwareModeEnum.Real)
                 _gpioController.Write(_pins.DirPin, dirValue);
+            DelayMilliSeconds(1); // Ensure direction pin is set
 
             //-- Set microsteppings pin values
             for (int iStep = 0; iStep < steps; iStep++)

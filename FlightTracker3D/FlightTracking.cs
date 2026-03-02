@@ -130,9 +130,9 @@ namespace FlightTracker3D
 
                 DateTime loopEnd = DateTime.Now;
                 TimeSpan loopDuration = loopEnd - loopStart;
-                if (loopDuration.TotalMilliseconds < 3000) //TODO: make this configurable
+                if (loopDuration.TotalMilliseconds < 4000) //TODO: make this configurable
                 {
-                    double delayMilliSec = (3000 - loopDuration.TotalMilliseconds);
+                    double delayMilliSec = (4000 - loopDuration.TotalMilliseconds);
                     try
                     {
                         await Task.Delay((int)delayMilliSec, cancellationToken);

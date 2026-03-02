@@ -187,6 +187,51 @@ namespace GeoUtil
         }
 
         /// <summary>
+        /// Convert ECEF Cartesian coordinates to WGS84 geodetic coordinates.
+        /// Uses iterative method (Bowring's method) for latitude calculation.
+        /// Inverse of GeodeticToEcef.
+        /// </summary>
+        /// <param name="x">ECEF X coordinate (meters)</param>
+        /// <param name="y">ECEF Y coordinate (meters)</param>
+        /// <param name="z">ECEF Z coordinate (meters)</param>
+        /// <returns>Geodetic coordinates: (Latitude in degrees, Longitude in degrees, Altitude in meters)</returns>
+        public static (double LatDeg, double LonDeg, double AltMeters) EcefToGeodetic(double x, double y, double z)
+        {
+            // Longitude is straightforward
+            double lonRad = Math.Atan2(y, x);
+            double lonDeg = lonRad * 180.0 / Math.PI;
+
+            // Iterative calculation for latitude and altitude
+            double p = Math.Sqrt(x * x + y * y);
+            double latRad = Math.Atan2(z, p * (1.0 - EccentricitySquared));
+
+            const int maxIterations = 10;
+            const double tolerance = 1e-12;
+            double altMeters = 0;
+
+            for (int i = 0; i < maxIterations; i++)
+            {
+                double sinLat = Math.Sin(latRad);
+                double N = SemiMajorAxis / Math.Sqrt(1.0 - EccentricitySquared * sinLat * sinLat);
+
+                altMeters = p / Math.Cos(latRad) - N;
+                double latRadNew = Math.Atan2(z, p * (1.0 - EccentricitySquared * N / (N + altMeters)));
+
+                if (Math.Abs(latRadNew - latRad) < tolerance)
+                {
+                    latRad = latRadNew;
+                    break;
+                }
+
+                latRad = latRadNew;
+            }
+
+            double latDeg = latRad * 180.0 / Math.PI;
+
+            return (latDeg, lonDeg, altMeters);
+        }
+
+        /// <summary>
         /// Calculates horizontal (great-circle) distance using Haversine formula (ignores altitude).
         /// Returns the shortest distance over the Earth's surface (approximated as a sphere).
         /// See: https://en.wikipedia.org/wiki/Haversine_formula
