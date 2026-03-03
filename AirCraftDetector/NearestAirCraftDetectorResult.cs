@@ -8,13 +8,16 @@ namespace AirCraftDetector
 {
     public class NearestAirCraftDetectorResult
     {
-        public NearestAirCraftDetectorResult(AircraftTrack aircraftTrack, AzElPosition aircraftAzElPosition)
+        public NearestAirCraftDetectorResult(AircraftTrack aircraftTrack, PositionPoint aircraftForecastPosition, AzElPosition aircraftAzElForecastPosition)
         {
             this.AircraftTrack = aircraftTrack;
-            this.AircraftAzElPosition = aircraftAzElPosition; 
+            this.AircraftForecastPosition = aircraftForecastPosition;
+            this.AircraftAzElForecastPosition = aircraftAzElForecastPosition; 
         }
         public AircraftTrack AircraftTrack { get; }
 
-        public AzElPosition AircraftAzElPosition { get; }
+        public AzElPosition AircraftAzElForecastPosition { get; }
+
+        public PositionPoint AircraftForecastPosition { get; }
     }
 }

@@ -8,5 +8,7 @@ namespace FlightTracker3DApp
     {
         public required LogLevel MinimumLogLevel { get; set; }
         public required HardwareModes HardwareModes { get; set; }
+        public required MicrosteppingMode MicrosteppingMode { get; set; }
+
     }
 }

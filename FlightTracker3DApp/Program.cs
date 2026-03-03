@@ -64,7 +64,7 @@ try
     });
 
     //-- Create and start flight tracking
-    using (FlightTracking flightTracking = new FlightTracking(appSettings.HardwareModes, loggerFactory))
+    using (FlightTracking flightTracking = new FlightTracking(appSettings.HardwareModes, appSettings.MicrosteppingMode,  loggerFactory))
     {
         await flightTracking.StartTrackingAsync(cts.Token);
     }

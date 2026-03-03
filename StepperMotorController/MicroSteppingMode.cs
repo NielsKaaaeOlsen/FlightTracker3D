@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 public enum MicrosteppingMode
 {
     M32,
+    M16,
     M8,
     M4,
-    M2
+    M2,
+    FULLSTEP
 }

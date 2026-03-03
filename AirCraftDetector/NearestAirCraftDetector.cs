@@ -31,7 +31,7 @@ namespace AirCraftDetector
         }
 
 
-        public NearestAirCraftDetectorResult?  GetNearestAirCraft()
+        public NearestAirCraftDetectorResult?  GetNearestAirCraftAndForecastPosition(DateTime tnew)
         {
             double distMin = Double.MaxValue;
             AircraftTrack? bestTrack = null; 
@@ -56,11 +56,20 @@ namespace AirCraftDetector
             }
             if (bestTrack != null) 
             {
-                AzElPosition azElPos = _referencePoint.ToAzElPosition(bestTrack.History.Last<PositionPoint>());
-                var nearest = new NearestAirCraftDetectorResult(bestTrack, azElPos);
-                return nearest;
+                PositionPoint forecasetPos = bestTrack.GetForecastPosition(tnew);
+                AzElPosition azElPos = _referencePoint.ToAzElPosition(forecasetPos);
+                var detectorResult = new NearestAirCraftDetectorResult(bestTrack, forecasetPos, azElPos);
+                return detectorResult;
             }
             else { return null; }
+        }
+
+        public void SetFakeTracksForTesting(List<AircraftTrack> tracks)
+        {
+            foreach (var track in tracks)
+            {
+                _tracks[track.Icao] = track;
+            }
         }
     }
 }

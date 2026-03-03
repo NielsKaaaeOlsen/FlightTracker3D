@@ -362,5 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Ignore common public
+# Ignore common publish
 publishCommon/
+
+# Ignore Test Stepper MotoprApp
+publishTestStepperMotoprApp/

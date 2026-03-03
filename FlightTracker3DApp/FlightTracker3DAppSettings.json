@@ -5,7 +5,8 @@
       "LcdHardwareMode": "Real",
       "LedHardwareMode": "Real",
       "StepperMotorHardwareMode": "Real",
-      "AirCraftListenerMode": "Real"
+      "AirCraftListenerMode": "Real",
+      "MicrosteppingMode": "M32"
     }
   }
 }

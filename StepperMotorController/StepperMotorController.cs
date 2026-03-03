@@ -99,6 +99,16 @@ namespace StepperMotorController
                     _microStepsPerStep = 32;
                     break;
 
+                case MicrosteppingMode.M16:
+                    if (_hardwareMode == HardwareModeEnum.Real)
+                    {
+                        _gpioController.Write(_pins.M0Pin, PinValue.Low);
+                        _gpioController.Write(_pins.M1Pin, PinValue.Low);
+                        _gpioController.Write(_pins.M2Pin, PinValue.High);
+                    }
+                    _microStepsPerStep = 16;
+                    break;
+
                 case MicrosteppingMode.M8:
                     if (_hardwareMode == HardwareModeEnum.Real)
                     {
@@ -128,6 +138,17 @@ namespace StepperMotorController
                     }
                     _microStepsPerStep = 2;
                     break;
+
+                case MicrosteppingMode.FULLSTEP:
+                    if (_hardwareMode == HardwareModeEnum.Real)
+                    {
+                        _gpioController.Write(_pins.M0Pin, PinValue.Low);
+                        _gpioController.Write(_pins.M1Pin, PinValue.Low);
+                        _gpioController.Write(_pins.M2Pin, PinValue.Low);
+                    }
+                    _microStepsPerStep = 1;
+                    break;
+
 
                 default:
                     throw new ArgumentException($"Unsupported microstepping mode: {mode}");

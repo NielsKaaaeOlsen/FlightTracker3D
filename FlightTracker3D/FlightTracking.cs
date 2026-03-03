@@ -14,8 +14,7 @@ namespace FlightTracker3D
         private readonly FlightTrackerLEDController _ledController;
         private readonly AzElController _azElController;
 
-
-        public FlightTracking(HardwareModes hardwareModes, ILoggerFactory? loggerFactory)
+        public FlightTracking(HardwareModes hardwareModes, MicrosteppingMode microsteppingMode, ILoggerFactory? loggerFactory)
         {
             //-- Determine host based on hardware mode for AirCraftListener. 
             //   If in Real mode, use the IP address of the Raspberry PI running the ReadSr service. 
@@ -35,7 +34,7 @@ namespace FlightTracker3D
             _ledController = new FlightTrackerLEDController(hardwareModes.LedHardwareMode);
             _azElController = new AzElController(loggerFactory, hardwareModes.StepperMotorHardwareMode);
 
-            _azElController.SetMicrostepping(MicrosteppingMode.M8);  //TODO: make this configurable
+            _azElController.SetMicrostepping(microsteppingMode);
         }
 
         void IDisposable.Dispose()
@@ -71,19 +70,20 @@ namespace FlightTracker3D
 
             _azElController.Initialize();
 
+            TimeSpan durationLoop = TimeSpan.FromSeconds(4); //TODO: make this configurable
             string? formerIcao = null;
             while (!cancellationToken.IsCancellationRequested)
             {
                 DateTime loopStart = DateTime.Now;
-                var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraft();
+                var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(loopStart + durationLoop);
                 if (nearestAirCraftResult != null)
                 {
                     if (formerIcao == null)
                     {
                         //-- fisrst aircraft found
                         Console.WriteLine($"First aircraft found: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
-                        double azimuth = nearestAirCraftResult.AircraftAzElPosition.Azimuth;
-                        double elevation = nearestAirCraftResult.AircraftAzElPosition.Elevation;
+                        double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
+                        double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
                         _lcdController.ApproachingTarget(azimuth, elevation);
                         _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
                         await _azElController.MoveToAsync(azimuth, elevation);
@@ -95,23 +95,22 @@ namespace FlightTracker3D
                         {
                             //-- same aircraft, update position only
                             Console.WriteLine($"Tracking same aircraft: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
-                            double durationSec = 3; //TODO: make this configurable
                             string callsign = nearestAirCraftResult.AircraftTrack.Callsign;
                             string icao = nearestAirCraftResult.AircraftTrack.Icao;
-                            double azimuth = nearestAirCraftResult.AircraftAzElPosition.Azimuth;
-                            double elevation = nearestAirCraftResult.AircraftAzElPosition.Elevation;
-                            double distanceMeter = nearestAirCraftResult.AircraftAzElPosition.Distance;
+                            double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
+                            double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
+                            double distanceMeter = nearestAirCraftResult.AircraftAzElForecastPosition.Distance;
                             double altitudeMeter = nearestAirCraftResult.AircraftTrack.History.Last<PositionPoint>().AltitudeMeters;
                             _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
                             _ledController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
-                            await _azElController.MoveToAsync(azimuth, elevation, durationSec);
+                            await _azElController.MoveToAsync(azimuth, elevation, durationLoop.TotalSeconds);
                         }
                         else
                         {
                             //-- new aircraft detected
                             Console.WriteLine($"New aircraft detected: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
-                            double azimuth = nearestAirCraftResult.AircraftAzElPosition.Azimuth;
-                            double elevation = nearestAirCraftResult.AircraftAzElPosition.Elevation;
+                            double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
+                            double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
                             _lcdController.ApproachingTarget(azimuth, elevation);
                             _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
                             await _azElController.MoveToAsync(azimuth, elevation);
@@ -129,10 +128,10 @@ namespace FlightTracker3D
                 }
 
                 DateTime loopEnd = DateTime.Now;
-                TimeSpan loopDuration = loopEnd - loopStart;
-                if (loopDuration.TotalMilliseconds < 4000) //TODO: make this configurable
+                TimeSpan actualDuration = loopEnd - loopStart;
+                if (actualDuration < durationLoop) 
                 {
-                    double delayMilliSec = (4000 - loopDuration.TotalMilliseconds);
+                    double delayMilliSec = (durationLoop.Milliseconds - actualDuration.TotalMilliseconds);
                     try
                     {
                         await Task.Delay((int)delayMilliSec, cancellationToken);
