@@ -181,3 +181,10 @@ https://github.com/NielsKaaaeOlsen/FlightTracker3D
 6)
 // If you want to deploy the application again, you can use the following command to build and publish the application in one step. This will create a self-contained application for linux-arm64 and output it to the publishCommon folder. You can then copy the contents of this folder to the Raspberry Pi as described in step 1.
 dotnet publish FlightTracker3DApp/FlightTracker3DApp.csproj -c Release -r linux-arm64 --self-contained true -o publishCommon
+
+
+7)
+scp FlightTracker3DApp\flighttracker3d.service pi@raspberrypi:~/FlightTracker3D
+scp FlightTracker3DApp\readsb.service          pi@raspberrypi:~/FlightTracker3D
+scp FlightTracker3DApp\setup_service.sh        pi@raspberrypi:~/FlightTracker3D
+
