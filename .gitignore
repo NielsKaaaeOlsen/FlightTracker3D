@@ -367,3 +367,6 @@ publishCommon/
 
 # Ignore Test Stepper MotoprApp
 publishTestStepperMotoprApp/
+
+# Ignore Flight Tracker3D App
+publishFlightTracker3DApp/

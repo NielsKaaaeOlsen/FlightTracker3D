@@ -161,9 +161,9 @@ namespace StepperMotorController
                 SetMicrosteppingPins(_microSteppingMode);  
             else
             {
-                SetMicrosteppingPins(MicrosteppingMode.M2);   // Use 1/2 microstepping for maximum speed
+                SetMicrosteppingPins(MicrosteppingMode.M8);   // Use 1/8 microstepping for maximum speed
                 // For maximum speed, set timePerStepSec to a very small value. We will use a value similar to 10 sec for a full revolution
-                timePerStepSec = 10.0 / 200.0;  // 10 sec per revolution / 200 steps per revolution = 0.05 sec per step
+                timePerStepSec = 20.0 / 200.0;  // 20 sec per revolution / 200 steps per revolution = 0.10 sec per step
             }
 
             DateTime startTime = DateTime.Now;
@@ -179,8 +179,8 @@ namespace StepperMotorController
                 delayLow++;
 
             //-- set minimum period for one microstep in milliseconds 
-            if (delayHigh < 2) delayHigh = 2;
-            if (delayLow < 2) delayLow = 2;
+            if (delayHigh < 3) delayHigh = 3;
+            if (delayLow < 3) delayLow = 3;
 
             //-- Set direction pin values  -->  Retning: High = CW, Low = CCW (afhænger af kabler) 
             PinValue dirValue = forward ? PinValue.High : PinValue.Low;

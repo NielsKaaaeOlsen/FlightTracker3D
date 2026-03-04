@@ -131,7 +131,7 @@ namespace FlightTracker3D
                 TimeSpan actualDuration = loopEnd - loopStart;
                 if (actualDuration < durationLoop) 
                 {
-                    double delayMilliSec = (durationLoop.Milliseconds - actualDuration.TotalMilliseconds);
+                    double delayMilliSec = (durationLoop.TotalMilliseconds - actualDuration.TotalMilliseconds);
                     try
                     {
                         await Task.Delay((int)delayMilliSec, cancellationToken);

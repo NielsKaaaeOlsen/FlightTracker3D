@@ -16,7 +16,7 @@ IMPORTANT ! !
 In Solution Explorer select the FlightTracker3DApp project 
 
 Build --> Publish --> Folder:
-	Target folder: ..\publishCommon\
+	Target folder: ..\publishFlightTracker3DApp\
 
 	Profile settings 
 		Deployment mode: Self contained
@@ -32,7 +32,7 @@ Here you find concise steps to enable passwordless SSH from your Windows machine
 
 Copy to Raspberry Pi:
 
-/*  C:\Users\niels\source\repos\FlightTracker3D\publishCommon   */
+/*  C:\Users\niels\source\repos\FlightTracker3D\publishFlightTracker3DApp   */
 
 
 Open a powershell
@@ -47,10 +47,10 @@ Create a folder for the application:
 mkdir FlightTracker3D
 
 From windows PC:
-scp -r publishCommon\* pi@raspberrypi:~/FlightTracker3D
+scp -r publishFlightTracker3DApp\* pi@raspberrypi:~/FlightTracker3D
 
 Of unknown reason, the .json file is not copied with the above command. So copy it separately:
-scp -r .\publishCommon\FlightTracker3DAppSettings.json pi@raspberrypi:~/FlightTracker3D
+scp -r .\publishFlightTracker3DApp\FlightTracker3DAppSettings.json pi@raspberrypi:~/FlightTracker3D
 
 From Raspberry Pi:
 
