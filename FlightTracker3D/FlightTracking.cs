@@ -125,11 +125,13 @@ namespace FlightTracker3D
                     _lcdController.NoTracks();
                     _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
                     await _azElController.MoveToAsync(0, 0);
+                    formerIcao = null;
                 }
 
                 DateTime loopEnd = DateTime.Now;
                 TimeSpan actualDuration = loopEnd - loopStart;
-                if (actualDuration < durationLoop) 
+                TimeSpan allowedGap = TimeSpan.FromSeconds(1);
+                if (actualDuration < durationLoop - allowedGap) 
                 {
                     double delayMilliSec = (durationLoop.TotalMilliseconds - actualDuration.TotalMilliseconds);
                     try
