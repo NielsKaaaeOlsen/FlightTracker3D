@@ -1,0 +1,122 @@
+@Actor User
+@Starter Program
+@Participant FlightTracking
+@Participant NearestAirCraftDetector
+@Participant AirCraftListener
+@Participant TrackInfoPresenter
+@Participant FlightTrackerLEDController
+@Participant AzElController
+@Participant StepperMotorController
+@Boundary "Readsb Service" as Readsb
+
+// Startup Phase
+Program.Main() {
+  "Load settings"
+  "Create logger"
+  
+  // Parallel keyboard monitoring
+  @Async(User) {
+    while("!cancelled") {
+      if("Ctrl-X") {
+        Program.Cancel()
+      }
+    }
+  }
+  
+  // Create FlightTracking
+  new FlightTracking {
+    NearestAirCraftDetector.new(host, port, referencePoint) {
+      AirCraftListener.new(host, port)
+    }
+    TrackInfoPresenter.new()
+    FlightTrackerLEDController.new()
+    AzElController.new() {
+      StepperMotorController.new("Azimuth")
+      StepperMotorController.new("Elevation")
+    }
+  }
+  
+  // Start tracking
+  FlightTracking.StartTrackingAsync() {
+    
+    // Start background aircraft listener
+    @Async(Readsb, AirCraftListener) {
+      AirCraftListener.ListenForAircraftAsync() {
+        Readsb.ConnectTCP(host, port)
+        while("connected") {
+          Readsb."Send SBS message"
+          AirCraftListener."Update _tracks"
+        }
+      }
+    }
+    
+    // Initialize hardware
+    TrackInfoPresenter.Initialize()
+    TrackInfoPresenter.Blank()
+    FlightTrackerLEDController.Initialize()
+    FlightTrackerLEDController.SetFlightTrackerState("NoAirCraftFound")
+    AzElController.Initialize() {
+      StepperMotorController.Initialize()
+      StepperMotorController.Initialize()
+    }
+    
+    // Main tracking loop
+    while("!cancelled") {
+      
+      // Get nearest aircraft
+      NearestAirCraftDetector.GetNearestAirCraftAndForecastPosition() {
+        "Find nearest aircraft"
+        return "NearestAirCraftResult or null"
+      }
+      
+      opt("aircraft found") {
+        
+        group("First aircraft") {
+          TrackInfoPresenter.ApproachingTarget()
+          FlightTrackerLEDController.SetFlightTrackerState("MovingToAirCraft")
+          AzElController.MoveToAsync(az, el) {
+            par {
+              StepperMotorController.StepAsync("azimuth")
+              StepperMotorController.StepAsync("elevation")
+            }
+          }
+        }
+        
+        group("Tracking same aircraft") {
+          @Async {
+            TrackInfoPresenter.AircraftTracking() {
+              while("!cancelled") {
+                "Display position"
+                "Sleep 3s"
+                "Display flight info"
+                "Sleep 3s"
+              }
+            }
+          }
+          FlightTrackerLEDController.SetFlightTrackerState("TrackingAirCraft")
+          AzElController.MoveToAsync(az, el, duration) {
+            par {
+              StepperMotorController.StepAsync("smooth azimuth")
+              StepperMotorController.StepAsync("smooth elevation")
+            }
+          }
+        }
+      }
+      
+      opt("no aircraft") {
+        TrackInfoPresenter.NoTracks()
+        FlightTrackerLEDController.SetFlightTrackerState("NoAirCraftFound")
+        AzElController.MoveToAsync(0, 0)
+      }
+      
+      "Sleep remaining time (4 sec loop)"
+    }
+    
+    // Graceful shutdown
+    FlightTracking.ShutdownAsync() {
+      TrackInfoPresenter.Blank()
+      FlightTrackerLEDController.SetFlightTrackerState("NoAirCraftFound")
+      AzElController.MoveToAsync(0, 0)
+    }
+  }
+}
