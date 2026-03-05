@@ -1,0 +1,143 @@
+
+
+Usage: readsb [OPTION...]
+readsb Mode-S/ADSB/TIS Receiver   Mictronics v3.9.0
+Build options: ENABLE_RTLSDR
+
+ General options:
+      --dcfilter             Apply a 1Hz DC filter to input data (requires more
+                             CPU)
+      --debug=<flags>        Debug mode (verbose), see flags below
+      --device-type=<type>   Select SDR type
+      --enable-biastee       Enable bias tee on supporting interfaces (default:
+                             disabled)
+      --fix                  Enable CRC single-bit error correction (default)
+      --forward-mlat         Allow forwarding of received mlat results to
+                             output ports
+      --freq=<hz>            Set frequency (default: 1090 MHz)
+      --gain=<db>            Set gain (default: max gain. Use -10 for
+                             auto-gain)
+      --gnss                 Show altitudes as GNSS when available
+      --interactive          Interactive mode refreshing data on screen.
+                             Implies --throttle
+      --interactive-ttl=<sec>   Remove from list if idle for <sec> (default:
+                             60)
+      --json-location-accuracy=<n>
+                             Accuracy of receiver location in json metadata:
+                             0=no location, 1=approximate, 2=exact
+      --lat=<lat>            Reference/receiver surface latitude
+      --lon=<lon>            Reference/receiver surface longitude
+      --max-range=<dist>     Absolute maximum range for position decoding (in
+                             nm, default: 300)
+      --metric               Use metric units
+      --mlat                 Display raw messages in Beast ASCII mode
+      --modeac               Enable decoding of SSR Modes 3/A & 3/C
+      --no-crc-check         Disable messages with invalid CRC (discouraged)
+      --no-fix               Disable CRC single-bit error correction
+      --no-interactive       Disable interactive mode, print to stdout
+      --no-modeac-auto       Don't enable Mode A/C if requested by a Beast
+                             connection
+      --onlyaddr             Show only ICAO addresses
+      --quiet                Disable output. Use for daemon applications
+      --raw                  Show only messages hex values
+      --show-only=<addr>     Show only messages by given ICAO on stdout
+      --snip=<level>         Strip IQ file removing samples < level
+      --stats                With --ifile print stats at exit. No other output
+      --stats-every=<sec>    Show and reset stats every <sec> seconds
+      --stats-range          Collect/show range histogram
+      --write-json=<dir>     Periodically write json output to <dir> (for
+                             external webserver)
+      --write-json-every=<t> Write json output every t seconds (default 1)
+
+ Network options:
+      --net                  Enable networking
+      --net-beast-reduce-interval=<seconds>
+                             BeastReduce position update interval, longer means
+                             less data (default: 0.125, valid range: 0.000 -
+                             14.999)
+      --net-beast-reduce-out-port=<ports>
+                             TCP BeastReduce output listen ports (default: 0)
+      --net-bi-port=<ports>  TCP Beast input listen ports  (default:
+                             30004,30104)
+      --net-bind-address=<ip>   IP address to bind to (default: Any; Use
+                             127.0.0.1 for private)
+      --net-bo-port=<ports>  TCP Beast output listen ports (default: 30005)
+      --net-buffer=<n>       TCP buffer size 64Kb * (2^n) (default: n=2, 256Kb)
+
+                                   --net-connector=<ip,port,protocol>
+Establish connection, can be specified multiple
+                             times (e.g. 127.0.0.1,23004,beast_out) Protocols:
+                             beast_out, beast_in, raw_out, raw_in, sbs_out,
+                             vrs_out
+      --net-connector-delay=<seconds>
+                             Outbound re-connection delay (default: 30)
+      --net-heartbeat=<rate> TCP heartbeat rate in seconds (default: 60 sec; 0
+                             to disable)
+      --net-only             Enable just networking, no RTL device or file used
+
+      --net-ri-port=<ports>  TCP raw input listen ports  (default: 30001)
+      --net-ro-interval=<rate>   TCP output flush interval in seconds (maximum
+                             interval between two network writes of accumulated
+                             data)(default: 0.05)
+      --net-ro-port=<ports>  TCP raw output listen ports (default: 30002)
+      --net-ro-size=<size>   TCP output flush size (maximum amount of
+                             internally buffered data before writing to
+                             network) (default: 1200)
+      --net-sbs-in-port=<ports>   TCP BaseStation input listen ports (default:
+                             0)
+      --net-sbs-port=<ports> TCP BaseStation output listen ports (default:
+                             30003)
+      --net-verbatim         Forward messages unchanged
+      --net-vrs-port=<ports> TCP VRS json output listen ports (default: 0)
+
+ RTL-SDR options:
+
+ use with --device-type rtlsdr
+      --device=<index|serial>   Select device by index or serial number
+      --enable-agc           Enable digital AGC (not tuner AGC!)
+      --ppm=<correction>     Set oscillator frequency correction in PPM
+
+ Modes-S Beast options:
+
+ use with --device-type modesbeast
+
+ Beast binary protocol and hardware handshake are always enabled.
+      --beast-crc-off        Turn OFF CRC checking
+      --beast-df045-on       Turn ON DF0/4/5 filter
+      --beast-df1117-on      Turn ON DF11/17-only filter
+      --beast-fec-off        Turn OFF forward error correction
+      --beast-mlat-off       Turn OFF MLAT time stamps
+      --beast-modeac         Turn ON mode A/C
+      --beast-serial=<path>  Path to Beast serial device (default
+                             /dev/ttyUSB0)
+
+ GNS HULC options:
+
+ use with --device-type gnshulc
+
+ Beast binary and HULC protocol input with hardware handshake enabled.
+      --beast-serial=<path>  Path to GNS HULC serial device (default
+                             /dev/ttyUSB0)
+
+ ifile-specific options:
+
+ use with --ifile
+      --ifile=<path>         Read samples from given file ('-' for stdin)
+      --iformat=<type>       Set sample format (UC8, SC16, SC16Q11)
+      --throttle             Process samples at the original capture speed
+
+ Help options:
+
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+
+Debug mode flags: d = Log frames decoded with errors
+                  D = Log frames decoded with zero errors
+                  c = Log frames with bad CRC
+                  C = Log frames with good CRC
+                  p = Log frames with bad preamble
+                  n = Log network debugging info
+                  j = Log frames to frames.js, loadable by debug.html
+
+Report bugs to Michael Wolf <michael@mictronics.de>.
