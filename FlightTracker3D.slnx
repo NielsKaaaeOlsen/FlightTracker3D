@@ -8,6 +8,8 @@
   <Project Path="LCDController/LCDController.csproj" Id="e61050cd-f80c-4d85-a3f6-1bd2fae4e19c" />
   <Project Path="LEDController/LEDController.csproj" />
   <Project Path="MockSbsServer/MockSbsServer.csproj" Id="ee4b9456-1934-462e-8fbe-618eeac4d91e" />
+  <Project Path="SbsMessageRecorderApp/SbsMessageRecorderApp.csproj" Id="7cd1974d-e6d9-4082-a59a-4e3b72d37390" />
+  <Project Path="SbsMessageReplayerApp/SbsMessageReplayerApp.csproj" Id="805d62c7-d38b-4b3a-a7a8-cc5022e3f040" />
   <Project Path="StepperMotorController/StepperMotorController.csproj" />
   <Project Path="TestAirCraftDetectorApp/TestAirCraftDetectorApp.csproj" Id="aa835253-442a-452d-be5a-122a35351055" />
   <Project Path="TestLCD20x4App/TestLCD20x4App.csproj" Id="6f0f4995-5d01-47ef-8477-7e09d664c61c" />
