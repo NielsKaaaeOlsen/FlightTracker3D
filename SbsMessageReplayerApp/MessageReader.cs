@@ -13,14 +13,14 @@ namespace SbsMessageReplayerApp
     internal class MessageReader
     {
         private readonly string _filepath;
-        private StreamReader reader;
-        bool first = true;
-        TimeSpan offset = TimeSpan.Zero;
+        private StreamReader _reader;
+        private bool _first = true;
+        private TimeSpan _offset = TimeSpan.Zero;
 
-        public class SbsMessageRecord
+        public class TimeStampedSbsMessage
         {
             public DateTime Timestamp { get; set; }
-            public string Line { get; set; } = string.Empty;
+            public string SbsMessage { get; set; } = string.Empty;
         }
 
 
@@ -40,27 +40,27 @@ namespace SbsMessageReplayerApp
 
             Console.WriteLine($"Reading SBS messages from '{_filepath}'...");
 
-            reader = new StreamReader(_filepath);
+            _reader = new StreamReader(_filepath);
         }
 
-        public SbsMessageRecord? GetNextRecord()
+        public TimeStampedSbsMessage? GetNextRecord()
         {
-            if (reader.EndOfStream)
+            if (_reader.EndOfStream)
             {
                 return null;
             }
             else
             {
-                string? record = reader.ReadLine();
+                string? record = _reader.ReadLine();
 
                 if (!string.IsNullOrWhiteSpace(record))
                 {
-                    if (first)
+                    if (_first)
                     {
-                        offset = GetTimeOffsetFromRecord(record);
-                        first = false;
+                        _offset = GetTimeOffsetFromRecord(record);
+                        _first = false;
                     }
-                    SbsMessageRecord messageRecord = ConvertRecordToSbsMessage(record, offset);
+                    TimeStampedSbsMessage messageRecord = ConvertRecordToSbsMessage(record, _offset);
                     return messageRecord;
                 }
                 else
@@ -83,9 +83,9 @@ namespace SbsMessageReplayerApp
             }
             else
                 throw new Exception($"DateTime parsing failed: {tokens[0]}");
-        })
+        }
 
-        SbsMessageRecord ConvertRecordToSbsMessage(string record, TimeSpan offset)
+        TimeStampedSbsMessage ConvertRecordToSbsMessage(string record, TimeSpan offset)
         {
             string[] tokens = record.Split(";");
             if (tokens.Length != 2)
@@ -94,10 +94,10 @@ namespace SbsMessageReplayerApp
             string line = tokens[1];
             if (DateTime.TryParseExact(tokens[0], "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime timeStamp))
             {
-                var rawRecord = new SbsMessageRecord
+                var rawRecord = new TimeStampedSbsMessage
                 {
                     Timestamp = timeStamp,
-                    Line = line
+                    SbsMessage = line
                 };
 
                 return UpdateMessageDateTimes(rawRecord, offset);
@@ -106,11 +106,11 @@ namespace SbsMessageReplayerApp
                 throw new Exception($"DateTime parsing failed: {tokens[0]}");
         }
 
-        public SbsMessageRecord UpdateMessageDateTimes( SbsMessageRecord sbsMessage, TimeSpan offset)
+        public TimeStampedSbsMessage UpdateMessageDateTimes( TimeStampedSbsMessage sbsMessage, TimeSpan offset)
         {
             DateTime timestampUpdated = sbsMessage.Timestamp.Add(offset);
 
-            string[] lineTokens = sbsMessage.Line.Split(",");
+            string[] lineTokens = sbsMessage.SbsMessage.Split(",");
 
             //                        4      6   7    8    9    10       11         12        13    14  15   16          17     18    19        20  21
             // SBS-1 format: MSG,3,,,ICAO,,date,time,date,time,callsign,altitude,groundspeed,track,lat,lon,verticalrate,squawk,alert,emergency,spi,onground
@@ -138,7 +138,7 @@ namespace SbsMessageReplayerApp
             }
             string lineUpdated = string.Join(",", lineTokens);
 
-            SbsMessageRecord newRecord = new SbsMessageRecord() { Timestamp = timestampUpdated, Line = lineUpdated };
+            TimeStampedSbsMessage newRecord = new TimeStampedSbsMessage() { Timestamp = timestampUpdated, SbsMessage = lineUpdated };
             return newRecord;
         }
     }

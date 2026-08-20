@@ -47,7 +47,7 @@ namespace SbsMessageReplayerApp
             }
         }
 
-        public async Task WaitUntilTimestamp(SbsMessageRecord record)
+        public async Task WaitUntilTimestamp(TimeStampedSbsMessage record)
         {
             TimeSpan delay = record.Timestamp - DateTime.Now;
             if (delay > TimeSpan.Zero)
