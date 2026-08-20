@@ -17,6 +17,8 @@ namespace SbsMessageReplayerApp
         private bool _first = true;
         private TimeSpan _offset = TimeSpan.Zero;
 
+        private TimeStampedSbsMessage? _lastMessage;
+
         public class TimeStampedSbsMessage
         {
             public DateTime Timestamp { get; set; }
@@ -30,6 +32,9 @@ namespace SbsMessageReplayerApp
         }
 
 
+        /// <summary>
+        /// Initializes the StreamReader for reading SBS messages from the specified file path. If the file does not exist, an error message is displayed.
+        /// </summary>
         public void InitializeReader()
         {
             if (!File.Exists(_filepath))
@@ -43,69 +48,89 @@ namespace SbsMessageReplayerApp
             _reader = new StreamReader(_filepath);
         }
 
-        public TimeStampedSbsMessage? GetNextRecord()
+        public TimeStampedSbsMessage? GetNextSbsMessage()
         {
+            if (_lastMessage != null)
+            {
+                var lastMessage = _lastMessage;
+                _lastMessage = null;
+                return lastMessage;
+            }
+
             if (_reader.EndOfStream)
             {
                 return null;
             }
             else
             {
-                string? record = _reader.ReadLine();
+                string? line = _reader.ReadLine();
 
-                if (!string.IsNullOrWhiteSpace(record))
+                if (!string.IsNullOrWhiteSpace(line))
                 {
+                    TimeStampedSbsMessage timeStampedSbsMessage = ConvertLineToSbsMessage(line);
                     if (_first)
                     {
-                        _offset = GetTimeOffsetFromRecord(record);
+                        _offset = GetTimeOffsetFromFirstTimeStampedSbsMessage(timeStampedSbsMessage);
                         _first = false;
                     }
-                    TimeStampedSbsMessage messageRecord = ConvertRecordToSbsMessage(record, _offset);
-                    return messageRecord;
+                    TimeStampedSbsMessage updatedTimeStampedSbsMessage = UpdateMessageDateTimes(timeStampedSbsMessage, _offset);
+                    return updatedTimeStampedSbsMessage;
                 }
                 else
                     return null;
             }
         }
 
-        TimeSpan GetTimeOffsetFromRecord(string record)
+        public void PushBackSbsMessage(TimeStampedSbsMessage timeStampedSbsMessage)
         {
-            //
-            TimeSpan delay = TimeSpan.FromSeconds(5);
-
-            string[] tokens = record.Split(";");
-            if (tokens.Length != 2)
-                throw new Exception($"Invalid record format: {record}. Two tokens expected.");
-            if (DateTime.TryParseExact(tokens[0], "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime timeStamp))
-            {
-                TimeSpan offset = DateTime.Now + delay - timeStamp;
-                return offset;
-            }
-            else
-                throw new Exception($"DateTime parsing failed: {tokens[0]}");
+            _lastMessage = timeStampedSbsMessage;
         }
 
-        TimeStampedSbsMessage ConvertRecordToSbsMessage(string record, TimeSpan offset)
+        /// <summary>
+        /// Calculates the time offset from the first timestamped SBS message to the current time plus a 5-second delay.
+        /// </summary>
+        /// <param name="timeStampedSbsMessage"></param>
+        /// <returns></returns>
+        TimeSpan GetTimeOffsetFromFirstTimeStampedSbsMessage(TimeStampedSbsMessage timeStampedSbsMessage)
         {
-            string[] tokens = record.Split(";");
-            if (tokens.Length != 2)
-                throw new Exception($"Invalid record format: {record}. Two tokens expected.");
+            TimeSpan delay = TimeSpan.FromSeconds(5);
+            TimeSpan offset = DateTime.Now + delay - timeStampedSbsMessage.Timestamp;
+            return offset;
+        }
 
-            string line = tokens[1];
+        /// <summary>
+        /// Converts a line from the SBS message file into a TimeStampedSbsMessage object.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        TimeStampedSbsMessage ConvertLineToSbsMessage(string line)
+        {
+            string[] tokens = line.Split(";");
+            if (tokens.Length != 2)
+                throw new Exception($"Invalid record format: {line}. Two tokens expected.");
+
+            string sbsMessage = tokens[1];
             if (DateTime.TryParseExact(tokens[0], "O", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime timeStamp))
             {
-                var rawRecord = new TimeStampedSbsMessage
+                var rawTimeStampedSbsMessage = new TimeStampedSbsMessage
                 {
                     Timestamp = timeStamp,
-                    SbsMessage = line
+                    SbsMessage = sbsMessage
                 };
 
-                return UpdateMessageDateTimes(rawRecord, offset);
+                return rawTimeStampedSbsMessage; 
             }
             else
                 throw new Exception($"DateTime parsing failed: {tokens[0]}");
         }
 
+        /// <summary>
+        /// Updates the date and time fields in the SBS message based on the provided offset.
+        /// </summary>
+        /// <param name="sbsMessage"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public TimeStampedSbsMessage UpdateMessageDateTimes( TimeStampedSbsMessage sbsMessage, TimeSpan offset)
         {
             DateTime timestampUpdated = sbsMessage.Timestamp.Add(offset);
@@ -138,8 +163,8 @@ namespace SbsMessageReplayerApp
             }
             string lineUpdated = string.Join(",", lineTokens);
 
-            TimeStampedSbsMessage newRecord = new TimeStampedSbsMessage() { Timestamp = timestampUpdated, SbsMessage = lineUpdated };
-            return newRecord;
+            // Return a new TimeStampedSbsMessage with the updated timestamp and SBS message based on the provided offset
+            return new TimeStampedSbsMessage() { Timestamp = timestampUpdated, SbsMessage = lineUpdated };
         }
     }
 }

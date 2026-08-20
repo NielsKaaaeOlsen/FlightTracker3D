@@ -39,7 +39,7 @@ namespace SbsMessageReplayerApp
             // Update aircraft positions
             while (true)
             {
-                var next = reader.GetNextRecord();
+                var next = reader.GetNextSbsMessage();
                 if (next != null)
                 {
                     await WaitUntilTimestamp(next);
