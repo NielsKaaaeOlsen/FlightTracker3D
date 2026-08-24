@@ -15,11 +15,8 @@ namespace SbsMessageReplayerApp
     internal class MockSbsServer
     {
 
-        public async Task StartAsync(int port)
+        public async Task StartAsync(string filepath, int port)
         {
-            // Initialize simulated aircraft
-            MessageReader reader = new MessageReader("sbs_messages.txt");
-
 
             var listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
@@ -32,47 +29,35 @@ namespace SbsMessageReplayerApp
                 {
                     var client = await listener.AcceptTcpClientAsync();
                     Console.WriteLine($"Client connected: {client.Client.RemoteEndPoint}");
-                    _ = HandleClientAsync(client);
+                    _ = HandleClientAsync(filepath,client);
                 }
             });
 
-            // Update aircraft positions
-            while (true)
-            {
-                var next = reader.GetNextSbsMessage();
-                if (next != null)
-                {
-                    await WaitUntilTimestamp(next);
-                }
-            }
         }
 
-        public async Task WaitUntilTimestamp(TimeStampedSbsMessage record)
-        {
-            TimeSpan delay = record.Timestamp - DateTime.Now;
-            if (delay > TimeSpan.Zero)
-            {
-                await Task.Delay(delay);
-            }
-        }
-
-        private async Task HandleClientAsync(TcpClient client)
+        private async Task HandleClientAsync(string filepath, TcpClient client)
         {
             try
             {
+                // Initialize reader for SBS messages
+                MessageReader reader = new MessageReader(filepath);
+
                 await using var stream = client.GetStream();
                 using var writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
 
                 while (client.Connected)
                 {
-                    foreach (var ac in _aircrafts)
-                    {
-                        // Generate SBS-1 format message
-                        string sbsMessage = GenerateSbsMessage(ac);
-                        await writer.WriteLineAsync(sbsMessage);
-                        Console.WriteLine(sbsMessage);
+                    TimeStampedSbsMessage? nextMessage; 
+                    while ((nextMessage = reader.GetNextSbsMessage()) != null) 
+                    { 
+                        if (nextMessage.Timestamp > DateTime.Now) 
+                        { 
+                            reader.PushBackSbsMessage(nextMessage); 
+                            break; 
+                        } 
+                        await writer.WriteLineAsync(nextMessage.SbsMessage); 
+                        Console.WriteLine(nextMessage.SbsMessage);
                     }
-
                     await Task.Delay(1000);  // Send updates every second
                 }
             }
@@ -81,7 +66,5 @@ namespace SbsMessageReplayerApp
                 Console.WriteLine($"Client disconnected: {ex.Message}");
             }
         }
-
-
     }
 }

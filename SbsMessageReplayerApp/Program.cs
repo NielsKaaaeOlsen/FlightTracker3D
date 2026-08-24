@@ -19,13 +19,9 @@ if (replayerSettings == null)
     return; 
 }
 
-Console.WriteLine($"SbsMessageFile: {replayerSettings.SbsMessageFile}");
+Console.WriteLine($"SbsMessageFile: {replayerSettings.SbsMessageFile}\nPort: {replayerSettings.port}");
 
+MockSbsServer server = new MockSbsServer();
+await server.StartAsync(replayerSettings.SbsMessageFile, replayerSettings.port);  //30003);
 
-
-var replayer = new MessageReader(replayerSettings.SbsMessageFile);
-
-replayer.InitializeReader();
-
-
-
+Console.WriteLine("Closing replayer");

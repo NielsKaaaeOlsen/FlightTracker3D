@@ -10,5 +10,6 @@ namespace SbsMessageReplayerApp
     public class SbsMessageReplayerSettings
     {
         public required string SbsMessageFile { get; set; } = string.Empty;
+        public required int port { get; set; }
     }
 }

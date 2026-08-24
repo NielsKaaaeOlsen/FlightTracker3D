@@ -13,7 +13,7 @@ namespace SbsMessageReplayerApp
     internal class MessageReader
     {
         private readonly string _filepath;
-        private StreamReader _reader;
+        private StreamReader? _reader;
         private bool _first = true;
         private TimeSpan _offset = TimeSpan.Zero;
 
@@ -57,7 +57,7 @@ namespace SbsMessageReplayerApp
                 return lastMessage;
             }
 
-            if (_reader.EndOfStream)
+            if (_reader?.EndOfStream == true)
             {
                 return null;
             }
