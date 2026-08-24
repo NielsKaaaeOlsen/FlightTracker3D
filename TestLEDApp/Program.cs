@@ -27,19 +27,19 @@ using (FlightTrackerLEDController flightTrackerLEDController = new FlightTracker
 {
     flightTrackerLEDController.Initialize();
 
-    Console.WriteLine($"State = {FlightTrackerState.NoAirCraftFound}    {DateTime.Now.ToString()}");
+    Console.WriteLine($"State = {FlightTrackerState.NoAirCraftFound}    {DateTime.UtcNow.ToString()}");
     flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
     Thread.Sleep(5000);
 
-    Console.WriteLine($"State = {FlightTrackerState.MovingToAirCraft}   {DateTime.Now.ToString()}");
+    Console.WriteLine($"State = {FlightTrackerState.MovingToAirCraft}   {DateTime.UtcNow.ToString()}");
     flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
     Thread.Sleep(5000);
 
-    Console.WriteLine($"State = {FlightTrackerState.TrackingAirCraft}   {DateTime.Now.ToString()}");
+    Console.WriteLine($"State = {FlightTrackerState.TrackingAirCraft}   {DateTime.UtcNow.ToString()}");
     flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
     Thread.Sleep(5000);
 
-    Console.WriteLine($"State = {FlightTrackerState.PowerOff}           {DateTime.Now.ToString()}");
+    Console.WriteLine($"State = {FlightTrackerState.PowerOff}           {DateTime.UtcNow.ToString()}");
     flightTrackerLEDController.SetFlightTrackerState(FlightTrackerState.PowerOff);
     Thread.Sleep(5000);
 }

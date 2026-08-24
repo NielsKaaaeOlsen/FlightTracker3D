@@ -66,7 +66,7 @@ static class SimpleTestCases
         while (true)
         {
             Thread.Sleep(4000);
-            DateTime tnew = DateTime.Now + durationLoop;
+            DateTime tnew = DateTime.UtcNow + durationLoop;
             NearestAirCraftDetectorResult? result = nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(tnew);
 
             if (result != null)
@@ -89,7 +89,7 @@ static class SimpleTestCases
             Altitude = 50
         };
 
-        DateTime now = DateTime.Now;
+        DateTime now = DateTime.UtcNow;
         var nearestAirCraftDetector = new NearestAirCraftDetector(String.Empty, 30003, referencePoint);
 
         AircraftTrack track1 = new AircraftTrack();

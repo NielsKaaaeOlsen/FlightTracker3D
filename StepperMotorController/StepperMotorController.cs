@@ -207,7 +207,7 @@ namespace StepperMotorController
                 }
             }
 
-            DateTime endTime = DateTime.Now;
+            DateTime endTime = DateTime.UtcNow;
             TimeSpan duration = endTime - startTime;
             _logger.LogInformation("-->Stepping completed in {duration} ms,   Expected {exp} ms or {expSec} sec", 
                 duration.TotalMilliseconds, steps * (delayHigh + delayLow) * _microStepsPerStep, steps * timePerStepSec);

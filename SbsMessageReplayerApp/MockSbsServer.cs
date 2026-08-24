@@ -22,6 +22,14 @@ namespace SbsMessageReplayerApp
             listener.Start();
             Console.WriteLine($"Server started on port {port}");
 
+
+            {
+                var clientFake = await listener.AcceptTcpClientAsync();
+                Console.WriteLine($"Client connected: {clientFake.Client.RemoteEndPoint}");
+                Task task = HandleClientAsync(filepath, clientFake);
+                task.Wait();
+            }
+
             // Accept clients
             _ = Task.Run(async () =>
             {
@@ -41,6 +49,7 @@ namespace SbsMessageReplayerApp
             {
                 // Initialize reader for SBS messages
                 MessageReader reader = new MessageReader(filepath);
+                reader.InitializeReader();
 
                 await using var stream = client.GetStream();
                 using var writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
@@ -50,7 +59,7 @@ namespace SbsMessageReplayerApp
                     TimeStampedSbsMessage? nextMessage; 
                     while ((nextMessage = reader.GetNextSbsMessage()) != null) 
                     { 
-                        if (nextMessage.Timestamp > DateTime.Now) 
+                        if (nextMessage.Timestamp > DateTime.UtcNow) 
                         { 
                             reader.PushBackSbsMessage(nextMessage); 
                             break; 

@@ -35,7 +35,7 @@ var loggerFactory = LoggerFactory.Create(builder =>
         ;
 });
 
-DateTime start = DateTime.Now;
+DateTime start = DateTime.UtcNow;
 
 ILogger logger = loggerFactory.CreateLogger("Azimuth Elevation Stepper Motors");
 logger.LogInformation("StepMotorApp started");
@@ -97,7 +97,7 @@ else
             (double azPos, double ElPos) = azElController.GetCurrentZElPosition();
             logger.LogInformation("Final position: azPos={azPos}, elPos={elPos}", azPos, ElPos);
 
-            DateTime end = DateTime.Now;
+            DateTime end = DateTime.UtcNow;
             logger.LogInformation("StepMotorApp ended. Total duration: {duration} sec", (end - start).TotalSeconds);
 
             //Move back to initial position with mazimum speed

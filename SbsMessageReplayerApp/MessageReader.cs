@@ -94,7 +94,7 @@ namespace SbsMessageReplayerApp
         TimeSpan GetTimeOffsetFromFirstTimeStampedSbsMessage(TimeStampedSbsMessage timeStampedSbsMessage)
         {
             TimeSpan delay = TimeSpan.FromSeconds(5);
-            TimeSpan offset = DateTime.Now + delay - timeStampedSbsMessage.Timestamp;
+            TimeSpan offset = DateTime.UtcNow + delay - timeStampedSbsMessage.Timestamp;
             return offset;
         }
 
@@ -151,14 +151,14 @@ namespace SbsMessageReplayerApp
                 DateOnly.TryParseExact(dateStr2, "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly date2)
                 )
             {
-                DateTime datetime1Offset = new DateTime(date1, time1).Add(offset);
-                DateTime datetime2Offset = new DateTime(date2, time2).Add(offset);
+                DateTime datetime1PlusOffset = new DateTime(date1, time1).Add(offset);
+                DateTime datetime2PlusOffset = new DateTime(date2, time2).Add(offset);
 
-                lineTokens[6] = datetime1Offset.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-                lineTokens[7] = datetime1Offset.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                lineTokens[6] = datetime1PlusOffset.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                lineTokens[7] = datetime1PlusOffset.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
-                lineTokens[8] = datetime2Offset.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
-                lineTokens[9] = datetime2Offset.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                lineTokens[8] = datetime2PlusOffset.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
+                lineTokens[9] = datetime2PlusOffset.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
             }
             string lineUpdated = string.Join(",", lineTokens);

@@ -97,7 +97,7 @@ namespace AirCraftDetector
                     List<string> toBeRemoved = new List<string>();
                     foreach (var track in _tracks)
                     {
-                        TimeSpan dt = DateTime.Now - track.Value.LastSeen;
+                        TimeSpan dt = DateTime.UtcNow - track.Value.LastSeen;
                         if (dt.TotalSeconds > _timeoutSec)
                             toBeRemoved.Add(track.Key);
                     }

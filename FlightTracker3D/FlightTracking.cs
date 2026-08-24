@@ -74,7 +74,7 @@ namespace FlightTracker3D
             string? formerIcao = null;
             while (!cancellationToken.IsCancellationRequested)
             {
-                DateTime loopStart = DateTime.Now;
+                DateTime loopStart = DateTime.UtcNow;
                 var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(loopStart + durationLoop);
                 if (nearestAirCraftResult != null)
                 {
@@ -128,7 +128,7 @@ namespace FlightTracker3D
                     formerIcao = null;
                 }
 
-                DateTime loopEnd = DateTime.Now;
+                DateTime loopEnd = DateTime.UtcNow;
                 TimeSpan actualDuration = loopEnd - loopStart;
                 TimeSpan allowedGap = TimeSpan.FromSeconds(1);
                 if (actualDuration < durationLoop - allowedGap) 

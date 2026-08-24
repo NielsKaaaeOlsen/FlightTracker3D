@@ -42,7 +42,7 @@ namespace SbsMessageRecorder
                     if (DateTime.UtcNow > recordUntil)
                         break;
                     Console.WriteLine($"line= {line}");
-                    _recordedMessages.Add(new SbsMessageRecord { Timestamp = DateTime.Now, Line = line });
+                    _recordedMessages.Add(new SbsMessageRecord { Timestamp = DateTime.UtcNow, Line = line });
                 }
             }
         }
