@@ -48,7 +48,7 @@ namespace AirCraftDetector
                 $"{date} {time}",
                 "yyyy/MM/dd HH:mm:ss.fff",
                 CultureInfo.InvariantCulture,
-                DateTimeStyles.AssumeUniversal,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
                 out var dt))
                 return dt;
 

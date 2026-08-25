@@ -43,11 +43,12 @@ try
     //-- Create cancellation token source for graceful shutdown
     using var cts = new CancellationTokenSource();
 
+    var token = cts.Token;
     //-- Start keyboard monitoring task
     var keyboardTask = Task.Run(() =>
     {
         Console.WriteLine("Press Ctrl-X to shutdown gracefully...");
-        while (!cts.Token.IsCancellationRequested)
+        while (!token.IsCancellationRequested)
         {
             if (Console.KeyAvailable)
             {

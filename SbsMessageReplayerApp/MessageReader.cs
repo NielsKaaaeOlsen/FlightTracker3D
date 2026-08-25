@@ -115,7 +115,7 @@ namespace SbsMessageReplayerApp
             {
                 var rawTimeStampedSbsMessage = new TimeStampedSbsMessage
                 {
-                    Timestamp = timeStamp,
+                    Timestamp = timeStamp.Subtract(TimeSpan.FromHours(2)),  //TODO: FJERN 
                     SbsMessage = sbsMessage
                 };
 

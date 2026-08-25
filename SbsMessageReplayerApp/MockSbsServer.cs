@@ -22,24 +22,39 @@ namespace SbsMessageReplayerApp
             listener.Start();
             Console.WriteLine($"Server started on port {port}");
 
-
-            {
-                var clientFake = await listener.AcceptTcpClientAsync();
-                Console.WriteLine($"Client connected: {clientFake.Client.RemoteEndPoint}");
-                Task task = HandleClientAsync(filepath, clientFake);
-                task.Wait();
-            }
-
             // Accept clients
-            _ = Task.Run(async () =>
+            Task task = Task.Run(async () =>
             {
                 while (true)
-                {
+                { 
                     var client = await listener.AcceptTcpClientAsync();
                     Console.WriteLine($"Client connected: {client.Client.RemoteEndPoint}");
-                    _ = HandleClientAsync(filepath,client);
+                    _ = HandleClientAsync(filepath, client);
                 }
             });
+            task.Wait();
+
+
+            // Det virker
+            //{
+            //    var clientFake = await listener.AcceptTcpClientAsync();
+            //    Console.WriteLine($"Client connected: {clientFake.Client.RemoteEndPoint}");
+            //    Task task = HandleClientAsync(filepath, clientFake);
+            //    task.Wait();
+            //}
+
+
+            //Det virker ikke
+            // Accept clients
+            //_ = Task.Run(async () =>
+            //{
+            //    while (true)
+            //    {
+            //        var client = await listener.AcceptTcpClientAsync();
+            //        Console.WriteLine($"Client connected: {client.Client.RemoteEndPoint}");
+            //        _ = HandleClientAsync(filepath,client);
+            //    }
+            //});
 
         }
 
