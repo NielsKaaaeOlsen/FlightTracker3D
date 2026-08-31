@@ -7,7 +7,7 @@ int ledPin = 16; // GPIO pin number for the LED
 
 HardwareModeEnum mode= HardwareModeEnum.Real; // Change to Real for actual hardware
 
-using (LEDController.LEDController led = new LEDController.LEDController(ledPin, mode))
+using (LEDController.LEDController led = new LEDController.LEDController(ledPin, mode, "TEST"))
 {
     led.Initialize();
 

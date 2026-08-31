@@ -35,16 +35,18 @@ namespace LEDController
         private HardwareModeEnum _hardwareMode;
         private bool _isBlinkingOn;
         private int _ledPin;
+        private readonly string _name;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LEDController"/> class.
         /// </summary>
         /// <param name="ledPin">GPIO pin number where the LED is connected.</param>
         /// <param name="mode">Hardware mode (Real or Emulated).</param>
-        public LEDController(int ledPin, HardwareModeEnum mode)
+        public LEDController(int ledPin, HardwareModeEnum mode, string name)
         {
             _ledPin = ledPin;
             _hardwareMode = mode;
+            _name = name;
             _currentState = LEDState.Off;
 
             if (_hardwareMode == HardwareModeEnum.Real)
@@ -90,14 +92,14 @@ namespace LEDController
                     if (_hardwareMode == HardwareModeEnum.Real)
                         _gpioController.Write(_ledPin, PinValue.Low);
                     else if (_hardwareMode == HardwareModeEnum.Emulated)
-                        Console.WriteLine("LED is off (emulated mode).");
+                        Console.WriteLine($"{_name} LED is off (emulated mode).");
                     break;
 
                 case LEDState.On:
                     if (_hardwareMode == HardwareModeEnum.Real)
                         _gpioController.Write(_ledPin, PinValue.High);
                     else if (_hardwareMode == HardwareModeEnum.Emulated)
-                        Console.WriteLine("LED is on (emulated mode).");
+                        Console.WriteLine($"{_name} LED is on (emulated mode).");
                     break;
 
                 case LEDState.Blinking:
@@ -110,7 +112,7 @@ namespace LEDController
                             if (_hardwareMode == HardwareModeEnum.Real)
                                 _gpioController.Write(_ledPin, _isBlinkingOn ? PinValue.High : PinValue.Low);
                             else if (_hardwareMode == HardwareModeEnum.Emulated)
-                                Console.WriteLine($"LED is {(_isBlinkingOn ? "On" : "off")} (emulated mode).");
+                                Console.WriteLine($"{_name} LED is {(_isBlinkingOn ? "On" : "off")} (emulated mode).");
 
                             Thread.Sleep(1000);
                             _isBlinkingOn = !_isBlinkingOn;

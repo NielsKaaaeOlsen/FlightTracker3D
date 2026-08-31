@@ -28,9 +28,9 @@ namespace LEDController
 
         public FlightTrackerLEDController(HardwareModeEnum mode)
         {
-            _redLedController = new LEDController(_redPin, mode); 
-            _yellowLedController = new LEDController(_yellowPin, mode);
-            _greenLedController = new LEDController(_greenPin, mode);
+            _redLedController = new LEDController(_redPin, mode, "Red"); 
+            _yellowLedController = new LEDController(_yellowPin, mode, "Yellow"); 
+            _greenLedController = new LEDController(_greenPin, mode, "Green"); 
         }
 
         public void Initialize()
