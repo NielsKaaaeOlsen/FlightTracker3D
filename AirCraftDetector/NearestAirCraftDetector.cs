@@ -59,6 +59,12 @@ namespace AirCraftDetector
                 PositionPoint forecasetPos = bestTrack.GetForecastPosition(tnew);
                 AzElPosition azElPos = _referencePoint.ToAzElPosition(forecasetPos);
                 var detectorResult = new NearestAirCraftDetectorResult(bestTrack, forecasetPos, azElPos);
+
+                if (azElPos.Azimuth < 0 || azElPos.Azimuth >= 360)
+                    throw new ArgumentOutOfRangeException(nameof(azElPos.Azimuth), "Azimuth degrees must be between 0 and 360.");
+                if (azElPos.Elevation < 0 || azElPos.Elevation > 90)
+                    throw new ArgumentOutOfRangeException(nameof(azElPos.Elevation), "Elevation degrees must be between 0 and 90.");
+
                 return detectorResult;
             }
             else { return null; }
