@@ -50,9 +50,7 @@ namespace LCDController
             if (_hardwareMode == HardwareModeEnum.Real && _lcd == null)
                 throw new InvalidOperationException("LCD not initialized. Call Initialize() first.");
 
-            if (_hardwareMode == HardwareModeEnum.Real)
-                _lcd.Clear();
-            else if (_hardwareMode == HardwareModeEnum.Emulated)
+            if (_hardwareMode == HardwareModeEnum.Emulated)
             {
                 Console.WriteLine("----X----X----X----X");
             }
@@ -62,19 +60,15 @@ namespace LCDController
 
             for (int i = 0; i < lines.Length; i++)
             {
+                string lineToWrite = lines[i] ?? string.Empty;
                 if (_hardwareMode == HardwareModeEnum.Real)
                 {
                     _lcd.SetCursorPosition(0, i);
-                    _lcd.Write(lines[i] ?? string.Empty);
+                    _lcd.Write(lineToWrite.PadRight(20).Substring(0, 20));
                 }
                 else if (_hardwareMode == HardwareModeEnum.Emulated)
-                    Console.WriteLine(lines[i] ?? string.Empty);
+                    Console.WriteLine(lineToWrite.PadRight(20).Substring(0, 20));
             }
-        }
-
-        public void Clear()
-        {
-            _lcd?.Clear();
         }
 
         public void Dispose()

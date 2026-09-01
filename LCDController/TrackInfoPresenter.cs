@@ -16,15 +16,10 @@ namespace LCDController
     public class TrackInfoPresenter : IDisposable
     {
         private readonly LCD20x4Controller _lcd20x4Controller;
-        private CancellationTokenSource? _cts;
         private readonly string _degreeSymbol; 
-
-        private Task? _task;
 
         public TrackInfoPresenter(HardwareModeEnum mode)
         {
-            _cts = null;
-            _task = null;
             _lcd20x4Controller = new LCD20x4Controller(mode);
 
             if (mode == HardwareModeEnum.Real)
@@ -43,14 +38,12 @@ namespace LCDController
 
         public void Dispose()
         {
-            _CancelTrackingTask();
             _lcd20x4Controller.Dispose();
         }
 
 
         public void Blank()
         {
-            _CancelTrackingTask();
             string[] lines = new string[] { "", "", "", "" };
             _lcd20x4Controller.WriteDisplay(lines);
         }
@@ -58,14 +51,12 @@ namespace LCDController
 
         public void NoTracks()
         {
-            _CancelTrackingTask();
             string[] lines = new string[] { "", "     No tracks", "", "" };
             _lcd20x4Controller.WriteDisplay(lines);
         }
 
         public void ApproachingTarget(double az, double el)
         {
-            _CancelTrackingTask();
             string compassDir = GetCompassDirection(az);
 
             string line0 = "Approaching position";
@@ -77,74 +68,80 @@ namespace LCDController
         }
 
         public void AircraftTracking(double az, double el, double altMeter, double dist, string callsign, string icao)
-        {
-            _CancelTrackingTask();
-            
-            // Opret CTS INDEN task startes
-            _cts = new CancellationTokenSource();
-            
-            _task = Task.Run(() => AircraftTrackingAsync(az, el, altMeter, dist, callsign, icao, _cts.Token));
-        }
-
-        public async Task AircraftTrackingAsync(double az, double el, double altMeter, double dist, string callsign, string icao, CancellationToken token)
-        {
+        {        
             string compassDir = GetCompassDirection(az);
 
-            string posLine0 = string.Create(CultureInfo.InvariantCulture, $"AZ  :{az,8:N1} {_degreeSymbol} ({compassDir})");
-            string posLine1 = string.Create(CultureInfo.InvariantCulture, $"EL  :{el,8:N1} {_degreeSymbol}");
-            string posLine2 = string.Create(CultureInfo.InvariantCulture, $"ALT :{altMeter/1000,6:N2} km");
-            string posLine3 = string.Create(CultureInfo.InvariantCulture, $"DIST:{dist/1000,6:N2} km");
-            string[] posInfoLines = new string[] { posLine0, posLine1, posLine2, posLine3 };
+            string line0 = callsign  + "  " + icao;
+            string line1 = "Azimuth  Elev Alt";
+            string line2 = 
+                string.Create(CultureInfo.InvariantCulture, $"{az,3:N0} {_degreeSymbol} ({compassDir})") +
+                string.Create(CultureInfo.InvariantCulture, $"{el,4:N0} {_degreeSymbol}") +
+                string.Create(CultureInfo.InvariantCulture, $"{altMeter / 1000,5:N1}km");
+            string line3 = string.Create(CultureInfo.InvariantCulture, $"Dist = {dist / 1000,5:N1}km");
+            string[] flightInfoLines = new string[] { line0, line1, line2, line3 };
 
-            string flightInfoLine0 = string.Create(CultureInfo.InvariantCulture, $"Callsign: {callsign}");
-            string flightInfoLine1 = string.Create(CultureInfo.InvariantCulture, $"Icao    : {icao}");
-            string flightInfoLine2 = string.Empty;
-            string flightInfoLine3 = string.Empty;
-            string[] flightInfoLines = new string[] { flightInfoLine0, flightInfoLine1, flightInfoLine2, flightInfoLine3 };
+            _lcd20x4Controller.WriteDisplay(flightInfoLines);
+        }
 
-            bool showPosInfo = true;
-            while (!token.IsCancellationRequested)  // Check token
-            {
-                try
-                {
-                    if (showPosInfo)
-                        _lcd20x4Controller.WriteDisplay(posInfoLines);
-                    else
-                        _lcd20x4Controller.WriteDisplay(flightInfoLines);
+        //public async Task AircraftTrackingAsync_2x4_switching(double az, double el, double altMeter, double dist, string callsign, string icao, CancellationToken token)
+        //{
+        //    string compassDir = GetCompassDirection(az);
+
+        //    string posLine0 = string.Create(CultureInfo.InvariantCulture, $"AZ  :{az,8:N1} {_degreeSymbol} ({compassDir})");
+        //    string posLine1 = string.Create(CultureInfo.InvariantCulture, $"EL  :{el,8:N1} {_degreeSymbol}");
+        //    string posLine2 = string.Create(CultureInfo.InvariantCulture, $"ALT :{altMeter/1000,6:N2} km");
+        //    string posLine3 = string.Create(CultureInfo.InvariantCulture, $"DIST:{dist/1000,6:N2} km");
+        //    string[] posInfoLines = new string[] { posLine0, posLine1, posLine2, posLine3 };
+
+        //    string flightInfoLine0 = string.Create(CultureInfo.InvariantCulture, $"Callsign: {callsign}");
+        //    string flightInfoLine1 = string.Create(CultureInfo.InvariantCulture, $"Icao    : {icao}");
+        //    string flightInfoLine2 = string.Empty;
+        //    string flightInfoLine3 = string.Empty;
+        //    string[] flightInfoLines = new string[] { flightInfoLine0, flightInfoLine1, flightInfoLine2, flightInfoLine3 };
+
+        //    bool showPosInfo = true;
+        //    while (!token.IsCancellationRequested)  // Check token
+        //    {
+        //        try
+        //        {
+        //            if (showPosInfo)
+        //                _lcd20x4Controller.WriteDisplay(posInfoLines);
+        //            else
+        //                _lcd20x4Controller.WriteDisplay(flightInfoLines);
                     
-                    await Task.Delay(showPosInfo ? 2000 : 1500, token);  // Use await
-                    showPosInfo = !showPosInfo;
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
-            }
-            _cts = null;
-        }
+        //            await Task.Delay(showPosInfo ? 2000 : 1500, token);  // Use await
+        //            showPosInfo = !showPosInfo;
+        //        }
+        //        catch (OperationCanceledException)
+        //        {
+        //            break;
+        //        }
+        //    }
+        //    _cts = null;
+        //}
 
 
-        private void _CancelTrackingTask()
-        {
-            if (_task != null)
-            {
-                //Console.WriteLine("Cancelling Task...");
-                _cts?.Cancel();
-                int counter = 0;
-                while (!_task.IsCompleted)
-                {
-                    //Console.WriteLine("Waiting for Task to complete...");
-                    Thread.Sleep(50); // Small delay to ensure the previous tracking task has been cancelled before starting a new one
-                    counter++;
-                    if (counter > 200) // Timeout after 10 second
-                    {
-                        throw new TimeoutException("Task cancellation timeout. The tracking task did not complete within the expected time frame.");
-                    }
-                }
-                //Console.WriteLine("Task cancelled and completed.");
-                _task = null;
-            }
-        }
+        //private void _CancelTrackingTask()
+        //{
+        //    if (_task != null)
+        //    {
+        //        //Console.WriteLine("Cancelling Task...");
+        //        _cts?.Cancel();
+        //        int counter = 0;
+        //        while (!_task.IsCompleted)
+        //        {
+        //            //Console.WriteLine("Waiting for Task to complete...");
+        //            Thread.Sleep(50); // Small delay to ensure the previous tracking task has been cancelled before starting a new one
+        //            counter++;
+        //            if (counter > 200) // Timeout after 10 second
+        //            {
+        //                throw new TimeoutException("Task cancellation timeout. The tracking task did not complete within the expected time frame.");
+        //            }
+        //        }
+        //        //Console.WriteLine("Task cancelled and completed.");
+        //        _task = null;
+        //    }
+        //}
 
 
 
