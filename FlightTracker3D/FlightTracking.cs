@@ -73,14 +73,15 @@ namespace FlightTracker3D
             _azElController.Initialize();
 
             TimeSpan durationLoop = TimeSpan.FromSeconds(4); //TODO: make this configurable
-            string? formerIcao = null;
+
+            NearestAirCraftDetectorResult? formerNearestAirCraftResult = null;
             while (!cancellationToken.IsCancellationRequested)
             {
                 DateTime loopStart = DateTime.UtcNow;
                 var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(loopStart + durationLoop);
                 if (nearestAirCraftResult != null)
                 {
-                    if (formerIcao == null)
+                    if (formerNearestAirCraftResult == null)
                     {
                         //-- fisrst aircraft found
                         Console.WriteLine($"First aircraft found: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
@@ -89,11 +90,11 @@ namespace FlightTracker3D
                         _lcdController.ApproachingTarget(azimuth, elevation);
                         _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
                         await _azElController.MoveToAsync(azimuth, elevation);
-                        formerIcao = nearestAirCraftResult.AircraftTrack.Icao;
+                        formerNearestAirCraftResult = nearestAirCraftResult;
                     }
                     else
                     {
-                        if (formerIcao == nearestAirCraftResult.AircraftTrack.Icao)
+                        if (formerNearestAirCraftResult.AircraftTrack.Icao == nearestAirCraftResult.AircraftTrack.Icao)
                         {
                             //-- same aircraft, update position only
                             Console.WriteLine($"Tracking same aircraft: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
@@ -103,9 +104,25 @@ namespace FlightTracker3D
                             double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
                             double distanceMeter = nearestAirCraftResult.AircraftAzElForecastPosition.Distance;
                             double altitudeMeter = nearestAirCraftResult.AircraftTrack.History.Last<PositionPoint>().AltitudeMeters;
-                            _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
-                            _ledController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
-                            await _azElController.MoveToAsync(azimuth, elevation, durationLoop.TotalSeconds);
+
+                            double azimuthDiff = Math.Abs(azimuth - formerNearestAirCraftResult.AircraftAzElForecastPosition.Azimuth);
+                            if (azimuthDiff < 180)
+                            {
+                                //--  small azimuth difference, move to new position with duration specified (slow movement)
+                                _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
+                                _ledController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
+                                await _azElController.MoveToAsync(azimuth, elevation, durationLoop.TotalSeconds);
+                            }
+                            else
+                            {
+                                //-- Large azimuth difference, move to new position without duration (fast movement)
+                                Console.WriteLine($"Azimuth difference too large: {azimuthDiff} degrees. Fast movement to new position");
+                                _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
+                                _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
+                                await _azElController.MoveToAsync(azimuth, elevation);
+
+                            }
+                            formerNearestAirCraftResult = nearestAirCraftResult;
                         }
                         else
                         {
@@ -116,7 +133,7 @@ namespace FlightTracker3D
                             _lcdController.ApproachingTarget(azimuth, elevation);
                             _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
                             await _azElController.MoveToAsync(azimuth, elevation);
-                            formerIcao = nearestAirCraftResult.AircraftTrack.Icao;
+                            formerNearestAirCraftResult = nearestAirCraftResult;
                         }
                     }
                 }
@@ -127,7 +144,7 @@ namespace FlightTracker3D
                     _lcdController.NoTracks();
                     _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
                     await _azElController.MoveToAsync(0, 0);
-                    formerIcao = null;
+                    formerNearestAirCraftResult = null;
                 }
 
                 DateTime loopEnd = DateTime.UtcNow;
