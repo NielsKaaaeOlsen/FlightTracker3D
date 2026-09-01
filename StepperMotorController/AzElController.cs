@@ -59,7 +59,7 @@ namespace StepperMotorController
             if (azimuthDegrees < 0 || azimuthDegrees >= 360) 
                 throw new ArgumentOutOfRangeException(nameof(azimuthDegrees), "Azimuth degrees must be between 0 and 360.");
             if (elevationDegrees < 0 || elevationDegrees > 90) 
-                throw new ArgumentOutOfRangeException(nameof(elevationDegrees), "Elevation degrees must be between 0 and 90."); 
+                throw new ArgumentOutOfRangeException(nameof(elevationDegrees), $"Elevation degrees must be between 0 and 90:  {elevationDegrees}");
 
             //-- Azimuth movement
             var azDegPerStep =_aziumuthController.GetDegreesPerStep();
