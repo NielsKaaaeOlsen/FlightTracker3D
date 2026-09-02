@@ -10,14 +10,15 @@ namespace AirCraftDetector
     public class AirCraftListener
     {
         private readonly ConcurrentDictionary<string, AircraftTrack> _tracks;
+        private readonly object _tracksLock;
 
         private readonly int _port;
         private readonly string _host;
-
         private readonly int _timeoutSec;
-        public AirCraftListener(string host, int port, ConcurrentDictionary<string, AircraftTrack> tracks)
+        public AirCraftListener(string host, int port, ConcurrentDictionary<string, AircraftTrack> tracks, object tracksLock)
         {
             _tracks = tracks;
+            _tracksLock = tracksLock;
             _host = host;
             _port = port;
 
@@ -39,49 +40,52 @@ namespace AirCraftDetector
 
                 if (msg?.Icao != null ) //&& msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
                 {
-                    _tracks.AddOrUpdate(msg.Icao,
-                        // addValueFactory: Oprettes kun hvis ICAO ikke findes
-                        key =>
-                        {
-                            var track = new AircraftTrack
+                    lock (_tracksLock)
+                    {
+                        _tracks.AddOrUpdate(msg.Icao,
+                            // addValueFactory: Oprettes kun hvis ICAO ikke findes
+                            key =>
                             {
-                                Icao = msg.Icao,
-                                Callsign = msg.Callsign,
-                                LastSeen = msg.Timestamp.Value
-                            };
-                            if (msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
-                            {
-                                track.History.Add(new PositionPoint
+                                var track = new AircraftTrack
                                 {
-                                    Latitude = msg.Latitude.Value,
-                                    Longitude = msg.Longitude.Value,
-                                    Altitude = msg.Altitude.Value,  //Feet
-                                    Timestamp = msg.Timestamp.Value
-                                });
-                                track.LastSeen = msg.Timestamp.Value;
-                            }
-                            if (msg?.Callsign != null)
-                                track.Callsign = msg.Callsign;
-                            return track;
-                        },
-                        // updateValueFactory: Opdater eksisterende track
-                        (key, existing) =>
-                        {
-                            if (msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
-                            {
-                                existing.LastSeen = msg.Timestamp.Value;
-                                existing.History.Add(new PositionPoint
+                                    Icao = msg.Icao,
+                                    Callsign = msg.Callsign,
+                                    LastSeen = msg.Timestamp.Value
+                                };
+                                if (msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
                                 {
-                                    Latitude = msg.Latitude.Value,
-                                    Longitude = msg.Longitude.Value,
-                                    Altitude = msg.Altitude.Value,  //Feet
-                                    Timestamp = msg.Timestamp.Value
-                                });
-                            }
-                            if (msg?.Callsign != null)
-                                existing.Callsign = msg.Callsign;
-                            return existing;
-                        });
+                                    track.History.Add(new PositionPoint
+                                    {
+                                        Latitude = msg.Latitude.Value,
+                                        Longitude = msg.Longitude.Value,
+                                        Altitude = msg.Altitude.Value,  //Feet
+                                        Timestamp = msg.Timestamp.Value
+                                    });
+                                    track.LastSeen = msg.Timestamp.Value;
+                                }
+                                if (msg?.Callsign != null)
+                                    track.Callsign = msg.Callsign;
+                                return track;
+                            },
+                            // updateValueFactory: Opdater eksisterende track
+                            (key, existing) =>
+                            {
+                                if (msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)
+                                {
+                                    existing.LastSeen = msg.Timestamp.Value;
+                                    existing.History.Add(new PositionPoint
+                                    {
+                                        Latitude = msg.Latitude.Value,
+                                        Longitude = msg.Longitude.Value,
+                                        Altitude = msg.Altitude.Value,  //Feet
+                                        Timestamp = msg.Timestamp.Value
+                                    });
+                                }
+                                if (msg?.Callsign != null)
+                                    existing.Callsign = msg.Callsign;
+                                return existing;
+                            });
+                    }
                 }
             });
         }
@@ -91,7 +95,7 @@ namespace AirCraftDetector
             while (true)
             {
                 Thread.Sleep(1000);
-                lock (_tracks)
+                lock (_tracksLock)
                 {
                     //-- Remove track after timeout period without signal
                     List<string> toBeRemoved = new List<string>();
