@@ -74,7 +74,7 @@ namespace LCDController
             string line0 = callsign  + "   " + icao;
             string line1 = "Azimuth   Elev  Alt";
             string line2 = 
-                string.Create(CultureInfo.InvariantCulture, $"{az,3:N0}{_degreeSymbol}/{compassDir}") +
+                string.Create(CultureInfo.InvariantCulture, $"{az,3:N0}{_degreeSymbol}({compassDir})") +
                 string.Create(CultureInfo.InvariantCulture, $"{el,4:N0}{_degreeSymbol}") +
                 string.Create(CultureInfo.InvariantCulture, $"{altMeter / 1000,5:N1}km");
             string line3 = string.Create(CultureInfo.InvariantCulture, $"Dist = {dist / 1000,5:N1}km");
