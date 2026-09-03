@@ -29,6 +29,8 @@ Console.WriteLine($"ECEF: X={ecef.X}, Y={ecef.Y}, Z={ecef.Z}");
 var geodetic = GeoDistance.EcefToGeodetic(ecef.X, ecef.Y, ecef.Z);
 Console.WriteLine($"Geodetic: Lat={geodetic.LatDeg}, Lon={geodetic.LonDeg}, Alt={geodetic.AltMeters}");
 
+Console.WriteLine("Bye bye!");
+
 public class Compass
 {
     /// <summary>

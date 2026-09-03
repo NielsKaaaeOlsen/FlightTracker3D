@@ -42,6 +42,17 @@ namespace AirCraftDetector
                 int ih1 = History.Count - 2;
                 int ih2 = History.Count - 3;
 
+                DateTime t0 = History[ih0].Timestamp;
+                DateTime t1 = History[ih1].Timestamp;
+                DateTime t2 = History[ih2].Timestamp;
+
+                if (tnew - t0 > 2 *(t0 - t2))
+                {
+                    //Nice to have: If the last three points are too close in time compared to the forecast time, we will just the time indices ih1 and ih2.
+                    // This is a simple heuristic to avoid extrapolating too far beyond the last known points.
+                    return History[0];
+                }
+
                 if (History[ih0].Timestamp == History[ih1].Timestamp
                  || History[ih1].Timestamp == History[ih2].Timestamp) return History[ih0];
 
