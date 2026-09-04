@@ -2,10 +2,10 @@
   "FlightTracker3DAppSettings": {
     "MinimumLogLevel": "Error",
     "HardwareModes": {
-      "LcdHardwareMode": "Emulated",
-      "LedHardwareMode": "Emulated",
-      "StepperMotorHardwareMode": "Emulated",
-      "AirCraftListenerMode": "Emulated",
+      "LcdHardwareMode": "Real",
+      "LedHardwareMode": "Real",
+      "StepperMotorHardwareMode": "Real",
+      "AirCraftListenerMode": "Real",
       "MicrosteppingMode": "M32"
     }
   }
