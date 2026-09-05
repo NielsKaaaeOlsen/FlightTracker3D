@@ -1,0 +1,79 @@
+4 sept 2026.
+
+Deploying the Replayer application on Raspberry Pi:
+
+Build the Application in RELASE mode.
+
+Select SbsMessageReplayerApp as startup project.
+
+IMPORTANT ! !
+In Solution Explorer select the SbsMessageReplayerApp project 
+
+Build --> Publish --> Folder:
+	Target folder: ..\publishSbsMessageReplayerApp\
+
+	Profile settings 
+		Deployment mode: Self contained
+		Runtime: linux-arm64
+
+
+
+
+Build --> Publish --> Click "Publish" button
+
+
+Copy to Raspberry Pi:
+
+/*  C:\Users\niels\source\repos\FlightTracker3D\publishSbsMessageReplayerApp   */
+
+
+
+Open a powershell
+
+Navigate to the folder where the application is built.
+C:\Users\niels\source\repos\FlightTracker3D
+
+ssh pi@raspberrypi
+
+Create a folder for the application:
+mkdir SbsMessageReplayer
+
+From windows PC:
+scp -r publishSbsMessageReplayerApp\* pi@raspberrypi:~/SbsMessageReplayer
+
+
+From Raspberry Pi:
+
+sudo raspi-config  ? ? ? ?
+
+reboot
+
+cd SbsMessageReplayer/
+chmod +x ./SbsMessageReplayerApp
+
+
+Stop Readsb service:
+sudo systemctl status readsb.service               # Check status
+sudo systemctl stop readsb.service                 # Stop service
+
+Stop FlightTracker3D  service:
+sudo systemctl status flighttracker3d.service      # Check status
+sudo systemctl stop flighttracker3d.service        # Stop service
+
+Copy recorded file to Raspberry Pi:
+
+scp -r C:\Users\niels\source\repos\FlightTracker3D\SbsMessageRecorderApp\bin\Release\net8.0\SbsMessages_20260904_100148.txt pi@raspberrypi:~/SbsMessageReplayer
+
+Update the appsettings file:
+nano  ./appsettings.json
+
+Use the Replayer application to replay the recorded file:
+./SbsMessageReplayerApp  
+
+
+Open a second terminal and connect to the Raspberry Pi via SSH:
+ssh pi@raspberrypi
+
+Start the FlightTracker3D:
+cd FlightTracker3D/
+./FlightTracker3DApp

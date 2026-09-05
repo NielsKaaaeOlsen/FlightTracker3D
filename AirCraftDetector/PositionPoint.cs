@@ -15,16 +15,16 @@ namespace AirCraftDetector
         /// <summary>
         /// Altitude in feet (ADS-B standard)
         /// </summary>
-        public int? Altitude { get; set; }
+        public int? AltitudeFeet { get; set; }
         
         /// <summary>
         /// Get altitude in meters for distance calculations
         /// </summary>
-        public double AltitudeMeters => (Altitude ?? 0) * 0.3048;
+        public double AltitudeMeters => (AltitudeFeet ?? 0) * 0.3048;
 
         public override string ToString()
         {
-            return $"Latitude: {Latitude:F4}°, Longitude: {Longitude:F4}°, Altitude: {(Altitude.HasValue ? $"{Altitude.Value:F1} feet " : "N/A")}";
+            return $"Latitude: {Latitude:F4}°, Longitude: {Longitude:F4}°, Altitude: {(AltitudeFeet.HasValue ? $"{AltitudeFeet.Value:F1} feet " : "N/A")}";
         }
 
     }

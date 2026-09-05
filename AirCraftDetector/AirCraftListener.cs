@@ -58,7 +58,7 @@ namespace AirCraftDetector
                                     {
                                         Latitude = msg.Latitude.Value,
                                         Longitude = msg.Longitude.Value,
-                                        Altitude = msg.Altitude.Value,  //Feet
+                                        AltitudeFeet = msg.Altitude.Value,  //Feet
                                         Timestamp = msg.Timestamp.Value
                                     });
                                     track.LastSeen = msg.Timestamp.Value;
@@ -77,7 +77,7 @@ namespace AirCraftDetector
                                     {
                                         Latitude = msg.Latitude.Value,
                                         Longitude = msg.Longitude.Value,
-                                        Altitude = msg.Altitude.Value,  //Feet
+                                        AltitudeFeet = msg.Altitude.Value,  //Feet
                                         Timestamp = msg.Timestamp.Value
                                     });
                                 }

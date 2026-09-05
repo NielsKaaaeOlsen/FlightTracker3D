@@ -22,7 +22,7 @@ PositionPoint referencePoint = new PositionPoint
 {
     Latitude = 55.860084097583304,
     Longitude = 12.4597123325542,
-    Altitude = 50
+    AltitudeFeet = 150   // ~ 50 meters above sea level
 };
 
 string icaoFilter = "4CAD91";
@@ -41,13 +41,13 @@ using (StreamWriter writer = new StreamWriter(tableFilePath))
                 {
                     Latitude = msg.Latitude.Value,
                     Longitude = msg.Longitude.Value,
-                    Altitude = msg.Altitude.Value
+                    AltitudeFeet = msg.Altitude.Value
                 };
                 AzElPosition azElPos = referencePoint.ToAzElPosition(pos);
                 double distance = referencePoint.DistanceTo(pos);
 
-                Console.WriteLine($"Timestamp: {msg.Timestamp}, ICAO: {msg.Icao}, Callsign: {msg.Callsign}, Position: ({pos.Latitude}, {pos.Longitude}, {pos.Altitude}), Azimuth: {azElPos.Azimuth}, Elevation: {azElPos.Elevation}, Distance: {distance}");
-                writer.WriteLine( $"Timestamp: {msg.Timestamp}, ICAO: {msg.Icao}, Callsign: {msg.Callsign}, Position: ({pos.Latitude}, {pos.Longitude}, {pos.Altitude}), Azimuth: {azElPos.Azimuth}, Elevation: {azElPos.Elevation}, Distance: {distance}");
+                Console.WriteLine($"Timestamp: {msg.Timestamp}, ICAO: {msg.Icao}, Callsign: {msg.Callsign}, Position: ({pos.Latitude}, {pos.Longitude}, {pos.AltitudeFeet}), Azimuth: {azElPos.Azimuth}, Elevation: {azElPos.Elevation}, Distance: {distance}");
+                writer.WriteLine( $"Timestamp: {msg.Timestamp}, ICAO: {msg.Icao}, Callsign: {msg.Callsign}, Position: ({pos.Latitude}, {pos.Longitude}, {pos.AltitudeFeet}), Azimuth: {azElPos.Azimuth}, Elevation: {azElPos.Elevation}, Distance: {distance}");
 
             }
         }

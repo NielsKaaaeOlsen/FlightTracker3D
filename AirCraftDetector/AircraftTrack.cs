@@ -34,7 +34,7 @@ namespace AirCraftDetector
 
                 (double LatDeg, double LonDeg, double AltMeters) = GeoDistance.EcefToGeodetic(Pnew.X, Pnew.Y, Pnew.Z);
                
-                return new PositionPoint() { Timestamp = tnew, Latitude = LatDeg, Longitude = LonDeg, Altitude = (int)(AltMeters / 0.3048) };
+                return new PositionPoint() { Timestamp = tnew, Latitude = LatDeg, Longitude = LonDeg, AltitudeFeet = (int)(AltMeters / 0.3048) };
             }
             else
             {
@@ -67,7 +67,7 @@ namespace AirCraftDetector
 
                 (double LatDeg, double LonDeg, double AltMeters) = GeoDistance.EcefToGeodetic(Pnew.X, Pnew.Y, Pnew.Z);
 
-                return new PositionPoint() { Timestamp = tnew, Latitude = LatDeg, Longitude = LonDeg, Altitude = (int)(AltMeters / 0.3048) };
+                return new PositionPoint() { Timestamp = tnew, Latitude = LatDeg, Longitude = LonDeg, AltitudeFeet = (int)(AltMeters / 0.3048) };
             }
         }
     }

@@ -26,7 +26,7 @@ namespace FlightTracker3D
             {
                 Latitude = 55.860084097583304,
                 Longitude = 12.4597123325542,
-                Altitude = 50
+                AltitudeFeet = 150   // ~ 50 meters above sea level
             };
 
             _nearestAirCraftDetector = new NearestAirCraftDetector(host, port, referencePoint);

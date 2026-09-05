@@ -55,7 +55,7 @@ static class SimpleTestCases
         {
             Latitude = 55.860084097583304,
             Longitude = 12.4597123325542,
-            Altitude = 50
+            AltitudeFeet = 150   // ~ 50 meters above sea level
         };
 
         var nearestAirCraftDetector = new NearestAirCraftDetector(host, port, referencePoint);
@@ -86,7 +86,7 @@ static class SimpleTestCases
         {
             Latitude = 55,
             Longitude = 12,
-            Altitude = 50
+            AltitudeFeet = 150   // ~ 50 meters above sea level
         };
 
         DateTime now = DateTime.UtcNow;
@@ -99,7 +99,7 @@ static class SimpleTestCases
             Timestamp = now,
             Latitude = 55,
             Longitude = 12,
-            Altitude = 500
+            AltitudeFeet = 150   // ~ 50 meters above sea level
         });
 
         nearestAirCraftDetector.SetFakeTracksForTesting(new List<AircraftTrack>
@@ -116,7 +116,7 @@ static class SimpleTestCases
             Timestamp = now + TimeSpan.FromSeconds(10),
             Latitude = 55.01,
             Longitude = 12,
-            Altitude = 500
+            AltitudeFeet = 150   // ~ 50 meters above sea level
         });
         NearestAirCraftDetectorResult? result2 = nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(now + TimeSpan.FromSeconds(20));
         string x2 = result2?.AircraftForecastPosition.ToString() ?? "null";
@@ -127,7 +127,7 @@ static class SimpleTestCases
             Timestamp = now + TimeSpan.FromSeconds(20),
             Latitude = 55.04,
             Longitude = 12,
-            Altitude = 500
+            AltitudeFeet = 150   // ~ 50 meters above sea level
         });
         NearestAirCraftDetectorResult? result3 = nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(now + TimeSpan.FromSeconds(30));
         string x3 = result3?.AircraftForecastPosition.ToString() ?? "null";
@@ -138,7 +138,7 @@ static class SimpleTestCases
             Timestamp = now + TimeSpan.FromSeconds(30),
             Latitude = 55.09,
             Longitude = 12,
-            Altitude = 500
+            AltitudeFeet = 150   // ~ 50 meters above sea level
         });
         NearestAirCraftDetectorResult? result4 = nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(now + TimeSpan.FromSeconds(40));
         string x4 = result4?.AircraftForecastPosition.ToString() ?? "null";
@@ -149,7 +149,7 @@ static class SimpleTestCases
             Timestamp = now + TimeSpan.FromSeconds(30),  // <-- same timestamp as previous point, but different position
             Latitude = 55.095,
             Longitude = 12,
-            Altitude = 500
+            AltitudeFeet = 150   // ~ 50 meters above sea level
         });
         NearestAirCraftDetectorResult? result5 = nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(now + TimeSpan.FromSeconds(40));
         string x5 = result5?.AircraftForecastPosition.ToString() ?? "null";

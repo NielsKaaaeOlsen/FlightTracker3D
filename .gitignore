@@ -370,3 +370,6 @@ publishTestStepperMotoprApp/
 
 # Ignore Flight Tracker3D App
 publishFlightTracker3DApp/
+
+# Ignore SbsMessage Replayer App
+publishSbsMessageReplayerApp/

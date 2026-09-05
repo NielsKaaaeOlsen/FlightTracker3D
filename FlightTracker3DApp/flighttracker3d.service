@@ -9,8 +9,8 @@ User=pi
 Group=pi
 WorkingDirectory=/home/pi/FlightTracker3D
 
-# Wait 4 seconds after readsb starts before starting FlightTracker3D
-ExecStartPre=/bin/sleep 4
+# Wait 20 seconds after readsb starts before starting FlightTracker3D
+ExecStartPre=/bin/sleep 20
 ExecStart=/home/pi/FlightTracker3D/FlightTracker3DApp
 
 # Auto-restart configuration
