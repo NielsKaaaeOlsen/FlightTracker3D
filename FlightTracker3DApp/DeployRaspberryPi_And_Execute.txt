@@ -188,3 +188,20 @@ scp FlightTracker3DApp\flighttracker3d.service pi@raspberrypi:~/FlightTracker3D
 scp FlightTracker3DApp\readsb.service          pi@raspberrypi:~/FlightTracker3D
 scp FlightTracker3DApp\setup_service.sh        pi@raspberrypi:~/FlightTracker3D
 
+
+
+8)
+In case of policy blocking the FlightTracker3DApp from running, check for any AppLocker or Windows Defender Application Control policies that may be preventing the execution of the application. You can also check for any "Mark-of-the-Web" (zone identifier) that may be blocking the DLL. If you encounter issues, ensure that the application is not being blocked by any
+
+Do the folowing steps:
+Unblock-File 'C:\Users\niels\source\repos\FlightTracker3D\FlightTracker3DApp\bin\Debug\net8.0\FlightTracker3D.dll'
+Remove ./obj folder
+Rebuild
+
+
+For release build:
+Unblock-File 'C:\Users\niels\source\repos\FlightTracker3D\FlightTracker3DApp\bin\Release\net8.0\FlightTracker3D.dll'
+Remove ./obj folder
+Rebuild
+
+if you still encounter issues, check the Windows Event Viewer for any related error messages or warnings that may provide more information about the cause of the problem.
