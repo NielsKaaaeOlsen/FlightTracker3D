@@ -50,7 +50,7 @@ namespace AirCraftDetector
                 {
                     //Nice to have: If the last three points are too close in time compared to the forecast time, we will just the time indices ih1 and ih2.
                     // This is a simple heuristic to avoid extrapolating too far beyond the last known points.
-                    return History[0];
+                    return new PositionPoint() { Timestamp = tnew, Latitude = History[ih0].Latitude, Longitude = History[ih0].Longitude, AltitudeFeet = History[ih0].AltitudeFeet};
                 }
 
                 if (History[ih0].Timestamp == History[ih1].Timestamp

@@ -106,7 +106,7 @@ namespace FlightTracker3D
                             double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
                             double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
                             double distanceMeter = nearestAirCraftResult.AircraftAzElForecastPosition.Distance;
-                            double altitudeMeter = nearestAirCraftResult.AircraftTrack.History.Last<PositionPoint>().AltitudeMeters;
+                            double altitudeMeter = nearestAirCraftResult.AircraftForecastPosition.AltitudeMeters; //AircraftTrack.History.Last<PositionPoint>().AltitudeMeters;
 
                             double azimuthDiff = Math.Abs(azimuth - formerNearestAirCraftResult.AircraftAzElForecastPosition.Azimuth);
                             if (azimuthDiff < 180)
