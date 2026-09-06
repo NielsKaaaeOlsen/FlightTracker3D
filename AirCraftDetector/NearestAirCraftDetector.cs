@@ -54,12 +54,13 @@ namespace AirCraftDetector
                         bestTrack = track;
                         distMin = distance;
                     }
+                    Console.WriteLine($"Debug: Tracks: ICAO: {track.Icao}, Callsign: {track.Callsign}, distance: {distance}");
                 }
                 if (bestTrack != null)
                 {
                     PositionPoint forecasetPos = bestTrack.GetForecastPosition(tnew);
                     AzElPosition azElPos = _referencePoint.ToAzElPosition(forecasetPos);
-                    var detectorResult = new NearestAirCraftDetectorResult(bestTrack, forecasetPos, azElPos);
+                    var detectorResult = new NearestAirCraftDetectorResult(bestTrack.Clone(), forecasetPos, azElPos);
 
                     if (azElPos.Azimuth < 0 || azElPos.Azimuth >= 360)
                         throw new ArgumentOutOfRangeException(nameof(azElPos.Azimuth), "Azimuth degrees must be between 0 and 360.");

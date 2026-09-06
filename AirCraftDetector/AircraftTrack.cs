@@ -70,6 +70,41 @@ namespace AirCraftDetector
                 return new PositionPoint() { Timestamp = tnew, Latitude = LatDeg, Longitude = LonDeg, AltitudeFeet = (int)(AltMeters / 0.3048) };
             }
         }
-    }
 
+        public AircraftTrack Clone()
+        {   // This method creates a deep copy of the AircraftTrack object manually without using serialization.
+            var clone = new AircraftTrack
+            {
+                Icao = this.Icao,
+                Callsign = this.Callsign,
+                LastSeen = this.LastSeen
+            };
+            clone.History.AddRange(this.History.Select(p => new PositionPoint
+            {
+                Timestamp = p.Timestamp,
+                Latitude = p.Latitude,
+                Longitude = p.Longitude,
+                AltitudeFeet = p.AltitudeFeet
+            }));
+            return clone;
+        }
+
+        public AircraftTrack CloneJson()
+        {   // This method uses JSON serialization and deserialization to create a deep copy of the AircraftTrack object.
+            // Note: This approach is less efficient than the manual cloning method above, but it is simpler and works well for objects that are serializable,
+            var json = System.Text.Json.JsonSerializer.Serialize(this, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            var clone = System.Text.Json.JsonSerializer.Deserialize<AircraftTrack>(json);
+            if (clone == null)
+                throw new Exception("Deserialization failed.");
+            return clone;
+        }
+
+        public void ToJsonString()
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(this, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            System.IO.File.WriteAllText(@"track.json", json);
+        }
+
+
+    }
 }

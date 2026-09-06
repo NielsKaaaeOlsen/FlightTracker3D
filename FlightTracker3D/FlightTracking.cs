@@ -78,13 +78,16 @@ namespace FlightTracker3D
             while (!cancellationToken.IsCancellationRequested)
             {
                 DateTime loopStart = DateTime.UtcNow;
+                Console.WriteLine("--------------------------------------------------");
+                Console.WriteLine($"Loop start: {loopStart:HH:mm:ss.fff}");
+
                 var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(loopStart + durationLoop);
                 if (nearestAirCraftResult != null)
                 {
                     if (formerNearestAirCraftResult == null)
                     {
                         //-- fisrst aircraft found
-                        Console.WriteLine($"First aircraft found: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
+                        Console.WriteLine($"First aircraft found: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp}");
                         double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
                         double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
                         _lcdController.ApproachingTarget(azimuth, elevation);
@@ -97,7 +100,7 @@ namespace FlightTracker3D
                         if (formerNearestAirCraftResult.AircraftTrack.Icao == nearestAirCraftResult.AircraftTrack.Icao)
                         {
                             //-- same aircraft, update position only
-                            Console.WriteLine($"Tracking same aircraft: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
+                            Console.WriteLine($"Tracking same aircraft: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp} Forecast distance: {nearestAirCraftResult.AircraftAzElForecastPosition.Distance}");
                             string callsign = nearestAirCraftResult.AircraftTrack.Callsign;
                             string icao = nearestAirCraftResult.AircraftTrack.Icao;
                             double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
@@ -127,7 +130,7 @@ namespace FlightTracker3D
                         else
                         {
                             //-- new aircraft detected
-                            Console.WriteLine($"New aircraft detected: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign}");
+                            Console.WriteLine($"New aircraft detected: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp}");
                             double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
                             double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
                             _lcdController.ApproachingTarget(azimuth, elevation);

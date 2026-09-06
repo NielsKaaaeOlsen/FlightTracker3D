@@ -35,7 +35,7 @@ namespace AirCraftDetector
                 var msg = SbsParser.Parse(line);
                 if (msg?.Latitude != null)
                 {
-                    Console.WriteLine($"      AirCraftListener: '{msg.Icao}' '{msg.Callsign}' {msg.Latitude},{msg.Longitude} ALT {msg.Altitude}");
+                    Console.WriteLine($"        AirCraftListener: '{msg.Icao}' '{msg.Callsign}' {msg.Latitude},  {msg.Longitude}  ALT {msg.Altitude} feet");
                 }
 
                 if (msg?.Icao != null ) //&& msg?.Latitude != null && msg.Longitude != null && msg.Altitude != null)

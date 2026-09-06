@@ -32,5 +32,12 @@ namespace AirCraftDetector
             //return $"Azimuth: {Azimuth:F1}°, Elevation: {Elevation:F1}°, Distance: {(Distance.HasValue ? $"{Distance.Value:F1} m" : "N/A")}";
             return $"Azimuth: {Azimuth:F1}°, Elevation: {Elevation:F1}°, Distance: {Distance:F1} m";
         }
+
+        public void ToJsonString()
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(this, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            System.IO.File.WriteAllText(@"AzElPosition.json", json);
+        }
+
     }
 }

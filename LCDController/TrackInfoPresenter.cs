@@ -108,7 +108,7 @@ namespace LCDController
         //                _lcd20x4Controller.WriteDisplay(posInfoLines);
         //            else
         //                _lcd20x4Controller.WriteDisplay(flightInfoLines);
-                    
+
         //            await Task.Delay(showPosInfo ? 2000 : 1500, token);  // Use await
         //            showPosInfo = !showPosInfo;
         //        }
