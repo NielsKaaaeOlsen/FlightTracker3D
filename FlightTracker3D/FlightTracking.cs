@@ -60,77 +60,36 @@ namespace FlightTracker3D
 
         public async Task StartTrackingAsync(CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("Starting flight tracking...");
-
-            Task task = _nearestAirCraftDetector.StartTrackingAsync();
-
-            _lcdController.Initialize();
-            _lcdController.Blank();
-
-            _ledController.Initialize();
-            _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
-
-            _azElController.Initialize();
-
-            TimeSpan durationLoop = TimeSpan.FromSeconds(4); //TODO: make this configurable
-
-            NearestAirCraftDetectorResult? formerNearestAirCraftResult = null;
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                DateTime loopStart = DateTime.UtcNow;
-                Console.WriteLine("--------------------------------------------------");
-                Console.WriteLine($"Loop start: {loopStart:HH:mm:ss.fff}");
+                Console.WriteLine("Starting flight tracking...");
 
-                var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(loopStart + durationLoop);
-                if (nearestAirCraftResult != null)
+                Task task = _nearestAirCraftDetector.StartTrackingAsync();
+
+                _lcdController.Initialize();
+                _lcdController.Blank();
+
+                _ledController.Initialize();
+                _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
+
+                _azElController.Initialize();
+
+                TimeSpan durationLoop = TimeSpan.FromSeconds(4); //TODO: make this configurable
+
+                NearestAirCraftDetectorResult? formerNearestAirCraftResult = null;
+                while (!cancellationToken.IsCancellationRequested)
                 {
-                    if (formerNearestAirCraftResult == null)
-                    {
-                        //-- fisrst aircraft found
-                        Console.WriteLine($"First aircraft found: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp}");
-                        double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
-                        double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
-                        _lcdController.ApproachingTarget(azimuth, elevation);
-                        _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
-                        await _azElController.MoveToAsync(azimuth, elevation);
-                        formerNearestAirCraftResult = nearestAirCraftResult;
-                    }
-                    else
-                    {
-                        if (formerNearestAirCraftResult.AircraftTrack.Icao == nearestAirCraftResult.AircraftTrack.Icao)
-                        {
-                            //-- same aircraft, update position only
-                            Console.WriteLine($"Tracking same aircraft: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp} Forecast distance: {nearestAirCraftResult.AircraftAzElForecastPosition.Distance}");
-                            string callsign = nearestAirCraftResult.AircraftTrack.Callsign;
-                            string icao = nearestAirCraftResult.AircraftTrack.Icao;
-                            double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
-                            double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
-                            double distanceMeter = nearestAirCraftResult.AircraftAzElForecastPosition.Distance;
-                            double altitudeMeter = nearestAirCraftResult.AircraftForecastPosition.AltitudeMeters; //AircraftTrack.History.Last<PositionPoint>().AltitudeMeters;
+                    DateTime loopStart = DateTime.UtcNow;
+                    Console.WriteLine("--------------------------------------------------");
+                    Console.WriteLine($"Loop start: {loopStart:HH:mm:ss.fff}");
 
-                            double azimuthDiff = Math.Abs(azimuth - formerNearestAirCraftResult.AircraftAzElForecastPosition.Azimuth);
-                            if (azimuthDiff < 180)
-                            {
-                                //--  small azimuth difference, move to new position with duration specified (slow movement)
-                                _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
-                                _ledController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
-                                await _azElController.MoveToAsync(azimuth, elevation, durationLoop.TotalSeconds);
-                            }
-                            else
-                            {
-                                //-- Large azimuth difference, move to new position without duration (fast movement)
-                                Console.WriteLine($"Azimuth difference too large: {azimuthDiff} degrees. Fast movement to new position");
-                                _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
-                                _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
-                                await _azElController.MoveToAsync(azimuth, elevation);
-
-                            }
-                            formerNearestAirCraftResult = nearestAirCraftResult;
-                        }
-                        else
+                    var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(loopStart + durationLoop);
+                    if (nearestAirCraftResult != null)
+                    {
+                        if (formerNearestAirCraftResult == null)
                         {
-                            //-- new aircraft detected
-                            Console.WriteLine($"New aircraft detected: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp}");
+                            //-- fisrst aircraft found
+                            Console.WriteLine($"First aircraft found: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp}");
                             double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
                             double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
                             _lcdController.ApproachingTarget(azimuth, elevation);
@@ -138,37 +97,95 @@ namespace FlightTracker3D
                             await _azElController.MoveToAsync(azimuth, elevation);
                             formerNearestAirCraftResult = nearestAirCraftResult;
                         }
+                        else
+                        {
+                            if (formerNearestAirCraftResult.AircraftTrack.Icao == nearestAirCraftResult.AircraftTrack.Icao)
+                            {
+                                //-- same aircraft, update position only
+                                Console.WriteLine($"Tracking same aircraft: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp} Forecast distance: {nearestAirCraftResult.AircraftAzElForecastPosition.Distance}");
+                                string callsign = nearestAirCraftResult.AircraftTrack.Callsign;
+                                string icao = nearestAirCraftResult.AircraftTrack.Icao;
+                                double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
+                                double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
+                                double distanceMeter = nearestAirCraftResult.AircraftAzElForecastPosition.Distance;
+                                double altitudeMeter = nearestAirCraftResult.AircraftForecastPosition.AltitudeMeters; //AircraftTrack.History.Last<PositionPoint>().AltitudeMeters;
+
+                                double azimuthDiff = Math.Abs(azimuth - formerNearestAirCraftResult.AircraftAzElForecastPosition.Azimuth);
+                                if (azimuthDiff < 180)
+                                {
+                                    //--  small azimuth difference, move to new position with duration specified (slow movement)
+                                    _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
+                                    _ledController.SetFlightTrackerState(FlightTrackerState.TrackingAirCraft);
+                                    await _azElController.MoveToAsync(azimuth, elevation, durationLoop.TotalSeconds);
+                                }
+                                else
+                                {
+                                    //-- Large azimuth difference, move to new position without duration (fast movement)
+                                    Console.WriteLine($"Azimuth difference too large: {azimuthDiff} degrees. Fast movement to new position");
+                                    _lcdController.AircraftTracking(azimuth, elevation, altitudeMeter, distanceMeter, callsign, icao);
+                                    _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
+                                    await _azElController.MoveToAsync(azimuth, elevation);
+
+                                }
+                                formerNearestAirCraftResult = nearestAirCraftResult;
+                            }
+                            else
+                            {
+                                //-- new aircraft detected
+                                Console.WriteLine($"New aircraft detected: ICAO={nearestAirCraftResult.AircraftTrack.Icao}, Callsign={nearestAirCraftResult.AircraftTrack.Callsign} Forecast time: {nearestAirCraftResult.AircraftForecastPosition.Timestamp}");
+                                double azimuth = nearestAirCraftResult.AircraftAzElForecastPosition.Azimuth;
+                                double elevation = nearestAirCraftResult.AircraftAzElForecastPosition.Elevation;
+                                _lcdController.ApproachingTarget(azimuth, elevation);
+                                _ledController.SetFlightTrackerState(FlightTrackerState.MovingToAirCraft);
+                                await _azElController.MoveToAsync(azimuth, elevation);
+                                formerNearestAirCraftResult = nearestAirCraftResult;
+                            }
+                        }
                     }
-                }
-                else
-                {
-                    //-- no aircraft found
-                    Console.WriteLine("No aircraft found.");
-                    _lcdController.NoTracks();
-                    _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
-                    await _azElController.MoveToAsync(0, 0);
-                    formerNearestAirCraftResult = null;
+                    else
+                    {
+                        //-- no aircraft found
+                        Console.WriteLine("No aircraft found.");
+                        _lcdController.NoTracks();
+                        _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
+                        await _azElController.MoveToAsync(0, 0);
+                        formerNearestAirCraftResult = null;
+                    }
+
+                    DateTime loopEnd = DateTime.UtcNow;
+                    TimeSpan actualDuration = loopEnd - loopStart;
+                    TimeSpan allowedGap = TimeSpan.FromSeconds(1);
+                    if (actualDuration < durationLoop - allowedGap)
+                    {
+                        double delayMilliSec = (durationLoop.TotalMilliseconds - actualDuration.TotalMilliseconds);
+                        try
+                        {
+                            await Task.Delay((int)delayMilliSec, cancellationToken);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            break;
+                        }
+                    }
                 }
 
-                DateTime loopEnd = DateTime.UtcNow;
-                TimeSpan actualDuration = loopEnd - loopStart;
-                TimeSpan allowedGap = TimeSpan.FromSeconds(1);
-                if (actualDuration < durationLoop - allowedGap) 
-                {
-                    double delayMilliSec = (durationLoop.TotalMilliseconds - actualDuration.TotalMilliseconds);
-                    try
-                    {
-                        await Task.Delay((int)delayMilliSec, cancellationToken);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        break;
-                    }
-                }
+                //-- Graceful shutdown
+                await ShutdownAsync();
             }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("Flight tracking cancelled.");
+                await ShutdownAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in flight tracking: {ex.Message}");
+                _lcdController.ShowException(ex);
 
-            //-- Graceful shutdown
-            await ShutdownAsync();
+                string filePath = $"Exception_{DateTime.UtcNow:yyyyMMdd_HHmmss}.txt";
+                System.IO.File.WriteAllText(filePath, ex.ToString());
+                return;
+            }
         }
     }
 }

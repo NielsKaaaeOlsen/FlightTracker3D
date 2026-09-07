@@ -72,15 +72,25 @@ namespace LCDController
             string compassDir = GetCompassDirection(az);
 
             string line0 = callsign  + "   " + icao;
-            string line1 = "Azimuth   Elev  Alt";
+            string line1 = "Azimuth  Elev  Alt";
             string line2 = 
-                string.Create(CultureInfo.InvariantCulture, $"{az,3:N0}{_degreeSymbol}({compassDir})") +
-                string.Create(CultureInfo.InvariantCulture, $"{el,4:N0}{_degreeSymbol}") +
+                string.Create(CultureInfo.InvariantCulture, $"{az,3:N1}{_degreeSymbol}") +
+                string.Create(CultureInfo.InvariantCulture, $"{el,4:N1}{_degreeSymbol}") +
                 string.Create(CultureInfo.InvariantCulture, $"{altMeter / 1000,5:N1}km");
-            string line3 = string.Create(CultureInfo.InvariantCulture, $"Dist = {dist / 1000,5:N1}km");
+            string line3 = string.Create(CultureInfo.InvariantCulture, $"Dist = {dist / 1000,5:N1}km  ({compassDir})");
             string[] flightInfoLines = new string[] { line0, line1, line2, line3 };
 
             _lcd20x4Controller.WriteDisplay(flightInfoLines);
+        }
+
+        public void ShowException(Exception ex)
+        {
+            string line0 = ex.Message.Substring(0, 20);
+            string line1 = ex.Message.Length > 20 ? ex.Message.Substring(20, Math.Min(20, ex.Message.Length - 20)) : "";
+            string line2 = ex.Message.Length > 40 ? ex.Message.Substring(40, Math.Min(20, ex.Message.Length - 40)) : "";
+            string line3 = ex.Message.Length > 60 ? ex.Message.Substring(60, Math.Min(20, ex.Message.Length - 60)) : "";
+            string[] lines = new string[] { line0, line1, line2 , line3 };
+            _lcd20x4Controller.WriteDisplay(lines);
         }
 
         //public async Task AircraftTrackingAsync_2x4_switching(double az, double el, double altMeter, double dist, string callsign, string icao, CancellationToken token)
