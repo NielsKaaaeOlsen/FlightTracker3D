@@ -94,8 +94,8 @@ else
             logger.LogInformation("3: Move command issued.");
 
 
-            (double azPos, double ElPos) = azElController.GetCurrentZElPosition();
-            logger.LogInformation("Final position: azPos={azPos}, elPos={elPos}", azPos, ElPos);
+            (int azStep, int ElStep) = azElController.GetCurrentAzElStep();
+            logger.LogInformation("Final position: azStep={azStep}, elStep={elStep}", azStep, ElStep);
 
             DateTime end = DateTime.UtcNow;
             logger.LogInformation("StepMotorApp ended. Total duration: {duration} sec", (end - start).TotalSeconds);
@@ -103,8 +103,8 @@ else
             //Move back to initial position with mazimum speed
             logger.LogInformation("Move back to initial position with mazimum speed");
             await azElController.MoveToAsync(0, 0);
-            (double azPosInitial, double ElPosInitial) = azElController.GetCurrentZElPosition();
-            logger.LogInformation("Final position as initial position: azPos={azPos}, elPos={elPos}", azPosInitial, ElPosInitial);
+            (int azStepFinal, int elStepFinal) = azElController.GetCurrentAzElStep();
+            logger.LogInformation("Final step: azStepFinal={azStepFinal}, elStepFinal={elStepFinal}", azStepFinal, elStepFinal);
 
             //azElController.MoveTo(-9, 0, durationSeconds);
             //azElController.MoveTo(0, -9, durationSeconds);

@@ -44,14 +44,14 @@ sudo systemctl start readsb.service
 
 # Wait a moment for Readsb to initialize
 echo "Waiting for Readsb to initialize..."
-sleep 5
+sleep 10
 
 # Start FlightTracker3D service (will automatically wait 4 seconds due to ExecStartPre)
 echo "Starting FlightTracker3D service..."
 sudo systemctl start flighttracker3d.service
 
 # Wait a moment for services to start
-sleep 2
+sleep 5
 
 # Show service status
 echo ""

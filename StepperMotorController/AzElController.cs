@@ -100,7 +100,7 @@ namespace StepperMotorController
             _elevationController.Dispose();
         }
 
-        public (double, double) GetCurrentZElPosition()
+        public (int, int) GetCurrentAzElStep()
         {
             return (_currentAzStep, _currentElStep);
         }

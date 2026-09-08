@@ -54,8 +54,8 @@ namespace FlightTracker3D
             _ledController.SetFlightTrackerState(FlightTrackerState.NoAirCraftFound);
             await _azElController.MoveToAsync(0, 0);
 
-            (double azPos, double elPos) = _azElController.GetCurrentZElPosition();
-            Console.WriteLine($"Stepper motors at home position:  azPos={azPos}, elPos={elPos} \nShutdown complete.", azPos, elPos);
+            (int azStep, int elStep) = _azElController.GetCurrentAzElStep();
+            Console.WriteLine($"Stepper motors at home position:  azStep={azStep}, elStep={elStep} \nAzEl controller shutdown complete.", azStep, elStep);
         }
 
         public async Task StartTrackingAsync(CancellationToken cancellationToken = default)
