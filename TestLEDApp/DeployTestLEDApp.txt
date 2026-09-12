@@ -11,7 +11,7 @@ IMPORTANT ! !
 In Solution Explorer select the TestLEDApp project 
 
 Build --> Publish --> Folder:
-	Target folder: ..\publishCommon\
+	Target folder: ..\publishTestLEDApp\
 
 	Profile settings 
 		Deployment mode: Self contained
@@ -27,7 +27,7 @@ Here you find concise steps to enable passwordless SSH from your Windows machine
 
 Copy to Raspberry Pi:
 
-C:\Users\niels\source\repos\FlightTracker3D\publishCommon
+C:\Users\niels\source\repos\FlightTracker3D\publishTestLEDApp
 
 
 Open a powershell
@@ -38,15 +38,15 @@ C:\Users\niels\source\repos\FlightTracker3D
 ssh pi@raspberrypi
 
 Create a folder for the application:
-mkdir FlightTracker3D
+mkdir TestLEDApp
 
 From windows PC:
-scp publishCommon\*.* pi@raspberrypi:~/FlightTracker3D
+scp publishTestLEDApp\* pi@raspberrypi:~/TestLEDApp
 
 
 From Raspberry Pi:
 
-cd FlightTracker3D/
+cd TestLEDApp/
 chmod +x ./TestLEDApp
 
 

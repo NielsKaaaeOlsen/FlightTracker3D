@@ -83,6 +83,10 @@ namespace FlightTracker3D
                     Console.WriteLine("--------------------------------------------------");
                     Console.WriteLine($"Loop start: {loopStart:HH:mm:ss.fff}");
 
+                    //-- Before moving the stepper motors, check if the current step motor position matches the expected forecast position from the last forecast position. If they differ by more than a certain threshold, throw an exception.
+                    if (formerNearestAirCraftResult != null)
+                        CheckStepperMotorMovement(formerNearestAirCraftResult.AircraftAzElForecastPosition);
+
                     var nearestAirCraftResult = _nearestAirCraftDetector.GetNearestAirCraftAndForecastPosition(loopStart + durationLoop);
                     if (nearestAirCraftResult != null)
                     {
@@ -185,6 +189,38 @@ namespace FlightTracker3D
                 string filePath = $"Exception_{DateTime.UtcNow:yyyyMMdd_HHmmss}.txt";
                 System.IO.File.WriteAllText(filePath, ex.ToString());
                 return;
+            }
+        }
+
+        private void CheckStepperMotorMovement(AzElPosition expectedPosition)
+        {
+            //-- Compare the current stepper motor position from AzElController and stepMotor controller with the expected position and throw an exception if they differ by more than a certain threshold.
+
+            //-- From the controller get the current stepper motor position in steps and convert to degrees
+            (int azStepController, int elStepController) = _azElController.GetCurrentAzElStep();
+            (double azDegPerStep, double elDegPerStep) = _azElController.GetDegreesPerStep();
+            double currentAzimuthController = azStepController * azDegPerStep;
+            double currentElevationController = elStepController * elDegPerStep;
+
+            //-- Calculate the difference between the current controller position and the expected position
+            double azimuthDiffController = Math.Abs(currentAzimuthController - expectedPosition.Azimuth);
+            double elevationDiffController = Math.Abs(currentElevationController - expectedPosition.Elevation);
+
+            //-- Get the accumulated stepper motor movement from step motors and convert to degrees
+            (int azStepMotor, int elStepMotor) = _azElController.GetAccumulatedStepMotorMovement();
+            double azimuthDiffMotor = Math.Abs(azStepMotor * azDegPerStep - expectedPosition.Azimuth);
+            double elevationDiffMotor = Math.Abs(elStepMotor * elDegPerStep - expectedPosition.Elevation);
+
+            if (azimuthDiffMotor > azDegPerStep || elevationDiffMotor > elDegPerStep || 
+                azimuthDiffController > azDegPerStep || elevationDiffController > elDegPerStep)
+            {
+                string failure =
+                    "Error: Stepper motor position differs from expected position." +
+                     $"Expected: (az={expectedPosition.Azimuth}, el={expectedPosition.Elevation})" +
+                     $"Current (controller): (az={currentAzimuthController}, el={currentElevationController}) " +
+                     $"Current (stepmotor): (az={azStepMotor * azDegPerStep}, el={elStepMotor * elDegPerStep}) ";
+                Console.WriteLine(failure);
+                throw new Exception(failure);
             }
         }
     }

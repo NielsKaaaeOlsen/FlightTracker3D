@@ -13,6 +13,8 @@ namespace StepperMotorController
         private MicrosteppingMode _microSteppingMode;
         private readonly GpioController _gpioController;
 
+        private int _AccumulatedSteps = 0;
+
         private int _microStepsPerStep;
         private double _degreesPerStep;
         private readonly ILogger _logger;
@@ -207,6 +209,11 @@ namespace StepperMotorController
                 }
             }
 
+            if (forward) 
+                _AccumulatedSteps += steps;
+            else
+                _AccumulatedSteps -= steps;
+
             DateTime endTime = DateTime.UtcNow;
             TimeSpan duration = endTime - startTime;
             _logger.LogInformation("-->Stepping completed in {duration} ms,   Expected {exp} ms or {expSec} sec", 
@@ -223,6 +230,11 @@ namespace StepperMotorController
         public int GetMicroStepsPerStep()
         {
             return _microStepsPerStep;
+        }
+
+        public int GetAccumulatedSteps()
+        {
+            return _AccumulatedSteps;
         }
 
         static void DelayMicroseconds_not_working(int microseconds)

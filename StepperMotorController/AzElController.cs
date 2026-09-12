@@ -16,6 +16,9 @@ namespace StepperMotorController
         private int _currentAzStep;
         private int _currentElStep;
 
+        private bool _azReverseWiring = true;
+        private bool _elReverseWiring = true;
+
         private ILogger _logger;
         private HardwareModeEnum _hardwareMode;
 
@@ -80,10 +83,11 @@ namespace StepperMotorController
             double elTimePerStepSec = durationSeconds / elStepsToMove;
             Console.WriteLine($"  Move To Async az={azimuthDegrees}  el={elevationDegrees} dtSec= {durationSeconds} {azForward} {azStepsToMove}  {elForward} {elStepsToMove}");
 
-
-            //-- Due to reverse wiring of the azimuth and elevation motors, we need to invert the directions
-            azForward = !azForward;
-            elForward = !elForward;
+            //-- If reverse wiring of the azimuth and elevation motors, we need to invert the directions
+            if (_azReverseWiring)
+                azForward = !azForward;
+            if (_elReverseWiring)
+                elForward = !elForward;
 
             var azTask = _aziumuthController.StepAsync(azForward, azStepsToMove, azTimePerStepSec);
             var elTask = _elevationController.StepAsync(elForward, elStepsToMove, elTimePerStepSec);
@@ -100,9 +104,29 @@ namespace StepperMotorController
             _elevationController.Dispose();
         }
 
+        public (double azDegPerStep, double elDegPerStep) GetDegreesPerStep()
+        {
+            var azDegPerStep = _aziumuthController.GetDegreesPerStep();
+            var elDegPerStep = _elevationController.GetDegreesPerStep();
+            return (azDegPerStep, elDegPerStep);
+        }
+
         public (int, int) GetCurrentAzElStep()
         {
             return (_currentAzStep, _currentElStep);
+        }
+
+        public (int, int) GetAccumulatedStepMotorMovement()
+        {
+            int azAccSteps = _aziumuthController.GetAccumulatedSteps();
+            int elAccSteps = _elevationController.GetAccumulatedSteps();
+
+            if (_azReverseWiring)
+                azAccSteps *= -1;
+            if (_elReverseWiring)
+                elAccSteps *= -1;    
+
+            return (azAccSteps, elAccSteps);
         }
     }
 }

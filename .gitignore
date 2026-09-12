@@ -373,3 +373,6 @@ publishFlightTracker3DApp/
 
 # Ignore SbsMessage Replayer App
 publishSbsMessageReplayerApp/
+
+# Ignore Test LED App
+publishTestLEDApp/
