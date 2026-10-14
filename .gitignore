@@ -376,3 +376,6 @@ publishSbsMessageReplayerApp/
 
 # Ignore Test LED App
 publishTestLEDApp/
+
+# # Ignore Test StepMotorFaultDetector App
+publishTestStepMotorFaultDetectorApp/
