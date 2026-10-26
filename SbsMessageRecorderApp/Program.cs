@@ -2,7 +2,8 @@
 
 try
 {
-    // The application will record messages for 30 minutes and save them to a text file with a timestamped filename.
+    // The application will record messages from the SBS server for a total of 4 hours, divided into 8 sessions of 30 minutes each. Each session will save the
+    // recorded messages to a text file with a timestamped filename.
     // The filename will be in the format "SbsMessages_YYYYMMDD_HHMMSS.txt".
     // The recorded messages will be saved in the text file in the format: "Timestamp;Message".
     // The application will also print the recorded messages to the console as they are received.
@@ -17,12 +18,17 @@ try
 
     Console.WriteLine("SDR SBS message recorder.\nBy NKO,  June 2026");
 
-    string filePath = $"SbsMessages_{DateTime.UtcNow:yyyyMMdd_HHmmss}.txt";
 
-    var recorder = new MessageRecorder();
-    await recorder.Record(1800); // Record for 30 minutes
+    for (int i = 1; i <= 8; i++)  // Loop to record the SBS-messages 8 times a 30 minutes (total 4 hours) and save them to a text file with a timestamped filename.
+    {
+        string filePath = $"SbsMessages_{DateTime.UtcNow:yyyyMMdd_HHmmss}.txt";
 
-    recorder.SaveToTxtFile(filePath);
+        var recorder = new MessageRecorder();
+        await recorder.Record(1800); // Record for 30 minutes
+
+        recorder.SaveToTxtFile(filePath);
+        Console.WriteLine($"{filePath}");
+    }
 }
 catch (Exception ex)
 {

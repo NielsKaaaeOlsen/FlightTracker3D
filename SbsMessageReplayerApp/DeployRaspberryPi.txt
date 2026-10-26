@@ -62,7 +62,10 @@ sudo systemctl stop flighttracker3d.service        # Stop service
 
 Copy recorded file to Raspberry Pi:
 
-scp -r C:\Users\niels\source\repos\FlightTracker3D\SbsMessageRecorderApp\bin\Release\net8.0\SbsMessages_20260904_100148.txt pi@raspberrypi:~/SbsMessageReplayer
+rem scp -r C:\Users\niels\source\repos\FlightTracker3D\SbsMessageRecorderApp\bin\Release\net8.0\SbsMessages_20260904_100148.txt pi@raspberrypi:~/SbsMessageReplayer
+
+scp -r C:\Users\niels\source\repos\FlightTracker3D\SbsMessageRecorderApp\bin\Release\net8.0\SbsMessages_20261025_164424.txt pi@raspberrypi:~/SbsMessageReplayer
+
 
 Update the appsettings file:
 nano  ./appsettings.json
